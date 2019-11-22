@@ -1,0 +1,171 @@
+//
+// Copyright (c) 1996-2015 CNRS/LAAS
+//
+// Permission to use, copy, modify, and distribute this software for any
+// purpose with or without fee is hereby granted, provided that the above
+// copyright notice and this permission notice appear in all copies.
+//
+// THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+// WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+// MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+// ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+// ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+// OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+//
+
+// This file was generated from d435.gen by the skeleton
+// template. Manual changes should be preserved, although they should
+// rather be added to the "doc" attributes of the genom objects defined in
+// d435.gen.
+
+= d435 component
+openrobots@laas.fr
+0.1
+:toc: left
+
+// fix default asciidoctor stylesheet issue #2407 and add hr clear rule
+ifdef::backend-html5[]
+[pass]
+++++
+<link rel="stylesheet" href="data:text/css,p{font-size: inherit !important}" >
+<link rel="stylesheet" href="data:text/css,hr{clear: both}" >
+++++
+endif::[]
+
+
+
+== Ports
+
+
+[[curr_pc]]
+=== curr_pc (out)
+
+
+[role="small", width="50%", float="right", cols="1"]
+|===
+a|.Data structure
+[disc]
+ * `struct ::d435::pc_s` `curr_pc`
+ ** `struct ::or::time::ts` `timeStamp`
+ *** `unsigned long` `sec`
+ *** `unsigned long` `nsec`
+ ** `boolean` `isRegistered`
+ ** `sequence< struct ::d435::pos >` `points`
+ *** `double` `x`
+ *** `double` `y`
+ *** `double` `z`
+ *** `double` `qw`
+ *** `double` `qx`
+ *** `double` `qy`
+ *** `double` `qz`
+ ** `sequence< struct ::d435::color >` `colors`
+ *** `octet` `r`
+ *** `octet` `v`
+ *** `octet` `b`
+
+|===
+
+'''
+
+[[curr_frame]]
+=== curr_frame (out)
+
+
+[role="small", width="50%", float="right", cols="1"]
+|===
+a|.Data structure
+[disc]
+ * `struct ::d435::frame_s` `curr_frame`
+ ** `struct ::or::time::ts` `timeStamp`
+ *** `unsigned long` `sec`
+ *** `unsigned long` `nsec`
+ ** `unsigned short` `height`
+ ** `unsigned short` `width`
+ ** `sequence< octet >` `pixels`
+
+|===
+
+'''
+
+[[calib_out]]
+=== calib_out (out)
+
+
+[role="small", width="50%", float="right", cols="1"]
+|===
+a|.Data structure
+[disc]
+ * `sequence< float, 5 >` `calib_out`
+
+|===
+
+'''
+
+[[disto_out]]
+=== disto_out (out)
+
+
+[role="small", width="50%", float="right", cols="1"]
+|===
+a|.Data structure
+[disc]
+ * `sequence< float, 5 >` `disto_out`
+
+|===
+
+'''
+
+== Services
+
+[[connect]]
+=== connect (activity)
+
+[role="small", width="50%", float="right", cols="1"]
+|===
+a|.Context
+[disc]
+  * In task `<<hw_comm>>`
+|===
+
+'''
+
+== Tasks
+
+[[hw_comm]]
+=== hw_comm
+
+[role="small", width="50%", float="right", cols="1"]
+|===
+a|.Context
+[disc]
+  * Free running
+|===
+
+'''
+
+[[rgb_publish]]
+=== rgb_publish
+
+[role="small", width="50%", float="right", cols="1"]
+|===
+a|.Context
+[disc]
+  * Frequency 100.0 _Hz_
+* Updates port `<<curr_frame>>`
+|===
+
+'''
+
+[[depth_publish]]
+=== depth_publish
+
+[role="small", width="50%", float="right", cols="1"]
+|===
+a|.Context
+[disc]
+  * Frequency 10.0 _Hz_
+* Updates port `<<curr_pc>>`
+|===
+
+'''

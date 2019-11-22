@@ -1,0 +1,122 @@
+/*/
+ * Copyright (c) 1996-2015 CNRS/LAAS
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
+ #include "d435Struct.idl"
+
+/* ---- component declaration ---- */
+
+component d435 {
+    version	    "0.1";
+    email		"openrobots@laas.fr";
+    lang		"c";
+    require	    "genom3 >= 2.99.26";
+    codels-require	"eigen3";
+
+    /* ---- Exceptions ---- */
+
+    exception rs_error { string<128> what; };
+    exception mem_error { string<128> what; };
+
+    /* ---- IDS ---- */
+
+    ids {
+        d435::pipe_s    pipe;
+        d435::RSdata_s  data;
+
+        d435::frame_s   frame;
+        d435::pc_s      pc;
+
+        d435::seq5F calib;
+        d435::seq5F disto;
+
+
+    };
+
+    /* ---- Ports ---- */
+
+    port            out d435::pc_s     curr_pc;
+    // port multiple   out d435::frame_s  curr_frame;
+    port            out d435::frame_s  curr_frame;
+    port            out d435::seq5F    calib_out;
+    port            out d435::seq5F    disto_out;
+
+
+    /* ---- Tasks ---- */
+
+    const unsigned short rgb_pub_period_ms = 10;
+    const unsigned short depth_pub_period_ms = 100;
+
+    task hw_comm {
+        codel<start> d435_comm_start(in pipe)
+            yield start, poll;
+
+        async codel<poll> d435_comm_poll(inout pipe)
+            yield read;
+
+        codel<read> d435_comm_read(in pipe, out data)
+            yield poll;
+
+        codel<stop> d435_comm_stop()
+            yield ether;
+    };
+
+    task rgb_publish {
+        period rgb_pub_period_ms ms;
+
+        codel<start> d435_rgb_start(in data)
+            yield pub;
+
+        codel<pub> d435_rgb_pub(in data, inout frame, out curr_frame)
+            yield pause::pub;
+
+        codel<stop> d435_rgb_stop()
+            yield ether;
+    };
+
+    task depth_publish {
+        period depth_pub_period_ms ms;
+
+        codel<start> d435_depth_start(in data)
+            yield pub;
+
+        codel<pub> d435_depth_pub(in data, inout pc, out curr_pc)
+            yield pause::pub;
+
+        codel<stop> d435_depth_stop()
+            yield ether;
+    };
+
+    /* ---- Activities ---- */
+
+/*
+    activity set_fps (
+        in int fps: "Publishing frequency")
+    {
+        task    rgb_publish, depth_publish;
+
+        codel<start> d435_set_frequency(in fps)
+            yield ether;
+    };
+*/
+
+    activity connect () {
+        task hw_comm;
+
+        codel<start> d435_connect_start(out ::ids)
+            yield ether;
+    };
+
+};

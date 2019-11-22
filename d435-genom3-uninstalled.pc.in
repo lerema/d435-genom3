@@ -1,0 +1,12 @@
+# pkg-config file for uninstalled d435 interface and codels library
+#
+prefix=@abs_top_builddir@
+libdir=${prefix}/codels
+includedir=${prefix}/codels
+
+Name: d435-genom3
+Description: d435 interface and codels library
+Version: @PACKAGE_VERSION@
+Requires: genom3 >= 2.99.26
+Libs: ${libdir}/libd435_codels.la
+Libs.private: @codels_requires_LIBS@
