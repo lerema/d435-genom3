@@ -34,7 +34,7 @@ libd435_codels_la_LDFLAGS=	$(requires_LIBS)
 libd435_codels_la_CPPFLAGS+=	$(codels_requires_CFLAGS)
 libd435_codels_la_LDFLAGS+=	$(codels_requires_LIBS)
 libd435_codels_la_LDFLAGS+=	-release $(PACKAGE_VERSION)
-
+libd435_codels_la_LDFLAGS+=	-librealsense2
 
 # idl  mappings
 BUILT_SOURCES=	d435_c_types.h

@@ -68,3 +68,10 @@ AC_CONFIG_FILES([
 ])
 AC_OUTPUT
 AG_OUTPUT_TEMPLATES
+
+# Dependency on 'foo'. Check that header.h and function foo_init() in
+# libdependency.so are present.
+AC_CHECK_HEADER([librealsense2/rs.hpp], [librealsense2/rs_advanced_mode.hpp],,[
+  AC_MSG_ERROR([Could not find realsense file.])])
+AC_CHECK_LIB([realsense2],,[
+  AC_MSG_ERROR([Could not find realsense2 library.])])
