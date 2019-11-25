@@ -25,7 +25,7 @@ ACLOCAL_AMFLAGS=	-I autoconf
 
 # IDL source files
 idldir=		$(datadir)/idl/d435
-nobase_dist_idl_DATA= d435.gen d435Struct.idl time.idl
+nobase_dist_idl_DATA= d435.gen d435Struct.idl
 
 pkgconfigdir=	$(libdir)/pkgconfig
 pkgconfig_DATA=

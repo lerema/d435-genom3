@@ -40,6 +40,7 @@ AC_PROG_CXX
 
 dnl External packages
 PKG_CHECK_MODULES(requires, [
+  openrobots2-idl >= 2.0
   genom3 >= 2.99.26
 ])
 PKG_CHECK_MODULES(codels_requires, [

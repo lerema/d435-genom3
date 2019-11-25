@@ -27,8 +27,7 @@
 #ifndef IDL_D435_STRUCT
 #define IDL_D435_STRUCT
 
-// #include "or/time/time.gen"
-#include "time.idl"
+#include "or/time/time.idl"
 
 module d435 {
 

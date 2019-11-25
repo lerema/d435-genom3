@@ -103,7 +103,8 @@ d435_comm_stop(const genom_context self)
  * Yields to d435_ether.
  */
 genom_event
-d435_connect_start(d435_ids *ids, const genom_context self)
+d435_connect_start(d435_ids *ids, const d435_calib *calib,
+                   const d435_disto *disto, const genom_context self)
 {
     // Start streaming
     rs2::pipeline_profile pipe_profile = ids->pipe->pipe.start();
@@ -128,14 +129,16 @@ d435_connect_start(d435_ids *ids, const genom_context self)
                    0 };
     float* d = intrinsics.coeffs;
 
-    // Initialize intrinsics
-    ids->calib._length = 5;
-    ids->disto._length = 5;
+    // Initialize intrinsics and publish
+    calib->data(self)->_length = 5;
+    disto->data(self)->_length = 5;
     for (int i=0; i<5; i++)
     {
-        ids->calib._buffer[i] = k[i];
-        ids->disto._buffer[i] = d[i];
+        calib->data(self)->_buffer[i] = k[i];
+        disto->data(self)->_buffer[i] = d[i];
     }
+    calib->write(self);
+    disto->write(self);
 
     // Initialize sequence for frame
     ids->frame.height = h;

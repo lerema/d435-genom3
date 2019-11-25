@@ -56,8 +56,8 @@ a|.Data structure
 [disc]
  * `struct ::d435::pc_s` `curr_pc`
  ** `struct ::or::time::ts` `timeStamp`
- *** `unsigned long` `sec`
- *** `unsigned long` `nsec`
+ *** `long` `sec`
+ *** `long` `nsec`
  ** `boolean` `isRegistered`
  ** `sequence< struct ::d435::pos >` `points`
  *** `double` `x`
@@ -86,8 +86,8 @@ a|.Data structure
 [disc]
  * `struct ::d435::frame_s` `curr_frame`
  ** `struct ::or::time::ts` `timeStamp`
- *** `unsigned long` `sec`
- *** `unsigned long` `nsec`
+ *** `long` `sec`
+ *** `long` `nsec`
  ** `unsigned short` `height`
  ** `unsigned short` `width`
  ** `sequence< octet >` `pixels`
@@ -96,29 +96,29 @@ a|.Data structure
 
 '''
 
-[[calib_out]]
-=== calib_out (out)
+[[calib]]
+=== calib (out)
 
 
 [role="small", width="50%", float="right", cols="1"]
 |===
 a|.Data structure
 [disc]
- * `sequence< float, 5 >` `calib_out`
+ * `sequence< float, 5 >` `calib`
 
 |===
 
 '''
 
-[[disto_out]]
-=== disto_out (out)
+[[disto]]
+=== disto (out)
 
 
 [role="small", width="50%", float="right", cols="1"]
 |===
 a|.Data structure
 [disc]
- * `sequence< float, 5 >` `disto_out`
+ * `sequence< float, 5 >` `disto`
 
 |===
 
@@ -134,6 +134,8 @@ a|.Data structure
 a|.Context
 [disc]
   * In task `<<hw_comm>>`
+  * Updates port `<<calib>>`
+  * Updates port `<<disto>>`
 |===
 
 '''
