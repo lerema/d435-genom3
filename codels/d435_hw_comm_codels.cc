@@ -34,7 +34,7 @@
 /** Codel d435_comm_start of task hw_comm.
  *
  * Triggered by d435_start.
- * Yields to d435_start, d435_poll.
+ * Yields to d435_pause_start, d435_poll.
  */
 genom_event
 d435_comm_start(const d435_pipe_s *pipe, const genom_context self)
@@ -43,7 +43,7 @@ d435_comm_start(const d435_pipe_s *pipe, const genom_context self)
     if (pipe->init)
         return d435_poll;
     else
-        return d435_start;
+        return d435_pause_start;
 }
 
 

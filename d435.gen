@@ -41,16 +41,16 @@ component d435 {
     /* ---- IDS ---- */
 
     ids {
-        d435::pipe_s    pipe;
-        d435::RSdata_s  data;
+        d435::pipe_s        pipe;
+        d435::RSdata_s      data;
 
-        d435::frame_s   frame;
-        d435::pc_s      pc;
+        d435::frame_s       frame;
+        d435::pc_s          pc;
 
-        d435::seq5F calib;
-        d435::seq5F disto;
+        d435::seq5F         calib;
+        d435::seq5F         disto;
 
-        // sequence<string> port_names;
+        // sequence<string>    port_names;
     };
 
     /* ---- Ports ---- */
@@ -69,7 +69,7 @@ component d435 {
 
     task hw_comm {
         codel<start> d435_comm_start(in pipe)
-            yield start, poll;
+            yield pause::start, poll;
 
         async codel<poll> d435_comm_poll(inout pipe)
             yield read;
@@ -85,7 +85,7 @@ component d435 {
         period rgb_pub_period_ms ms;
 
         codel<start> d435_rgb_start(in data)
-            yield pub;
+            yield pause::start, pub;
 
         codel<pub> d435_rgb_pub(in data, inout frame, out curr_frame)
             yield pause::pub;
@@ -98,7 +98,7 @@ component d435 {
         period depth_pub_period_ms ms;
 
         codel<start> d435_depth_start(in data)
-            yield pub;
+            yield pause::start, pub;
 
         codel<pub> d435_depth_pub(in data, inout pc, out curr_pc)
             yield pause::pub;
@@ -113,7 +113,7 @@ component d435 {
     activity set_fps (
         in int fps: "Publishing frequency")
     {
-        task    rgb_publish, depth_publish;
+        task rgb_publish, depth_publish;
 
         codel<start> d435_set_frequency(in fps)
             yield ether;
