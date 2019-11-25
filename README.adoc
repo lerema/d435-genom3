@@ -126,6 +126,25 @@ a|.Data structure
 
 == Services
 
+[[set_fps]]
+=== set_fps (activity)
+
+[role="small", width="50%", float="right", cols="1"]
+|===
+a|.Inputs
+[disc]
+ * `string<64>` `serial` (default `"img_pub"`) Out port name
+
+ * `unsigned short` `fps` (default `"60"`) Publish frequency
+
+a|.Context
+[disc]
+  * In task `<<rgb_publish>>`
+  (frequency 100.0 _Hz_)
+|===
+
+'''
+
 [[connect]]
 === connect (activity)
 

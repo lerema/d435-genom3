@@ -102,3 +102,18 @@ d435_rgb_stop(const genom_context self)
   /* skeleton sample: insert your code */
   /* skeleton sample */ return d435_ether;
 }
+
+
+/* --- Activity set_fps ------------------------------------------------- */
+
+/** Codel d435_set_frequency of activity set_fps.
+ *
+ * Triggered by d435_start.
+ * Yields to d435_ether.
+ */
+genom_event
+d435_set_frequency(uint16_t fps, const genom_context self)
+{
+  /* skeleton sample: insert your code */
+  /* skeleton sample */ return d435_ether;
+}

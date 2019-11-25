@@ -26,7 +26,7 @@
 
 #include "d435Struct.idl"
 
-/* ---- component declaration ---- */
+/* ---- Component declaration ---- */
 
 component d435 {
     version	    "0.1";
@@ -49,7 +49,7 @@ component d435 {
         d435::frame_s       frame;
         d435::pc_s          pc;
 
-        // sequence<string>    port_names;
+        // sequence<string<128>>    port_names;
     };
 
     /* ---- Ports ---- */
@@ -108,16 +108,15 @@ component d435 {
 
     /* ---- Activities ---- */
 
-/*
     activity set_fps (
-        in int fps: "Publishing frequency")
+        in string<64> serial = "img_pub" : "Out port name",
+        in unsigned short fps = 60 : "Publish frequency")
     {
-        task rgb_publish, depth_publish;
+        task rgb_publish;
 
         codel<start> d435_set_frequency(in fps)
             yield ether;
     };
-*/
 
     activity connect () {
         task hw_comm;
