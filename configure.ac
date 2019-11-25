@@ -1,18 +1,26 @@
 dnl Autoconf file for building d435 codels library.
 dnl
-dnl Copyright (c) 1996-2015 CNRS/LAAS
+dnl Copyright (c) 2019 LAAS/CNRS
+dnl All rights reserved.
 dnl
-dnl Permission to use, copy, modify, and distribute this software for any
-dnl purpose with or without fee is hereby granted, provided that the above
-dnl copyright notice and this permission notice appear in all copies.
+dnl Redistribution  and  use  in  source  and binary  forms,  with  or  without
+dnl modification, are permitted provided that the following conditions are met:
 dnl
-dnl THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-dnl WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-dnl MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-dnl ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-dnl WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-dnl ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-dnl OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+dnl   1. Redistributions of  source  code must retain the  above copyright
+dnl      notice and this list of conditions.
+dnl   2. Redistributions in binary form must reproduce the above copyright
+dnl      notice and  this list of  conditions in the  documentation and/or
+dnl      other materials provided with the distribution.
+dnl
+dnl THE SOFTWARE  IS PROVIDED "AS IS"  AND THE AUTHOR  DISCLAIMS ALL WARRANTIES
+dnl WITH  REGARD   TO  THIS  SOFTWARE  INCLUDING  ALL   IMPLIED  WARRANTIES  OF
+dnl MERCHANTABILITY AND  FITNESS.  IN NO EVENT  SHALL THE AUTHOR  BE LIABLE FOR
+dnl ANY  SPECIAL, DIRECT,  INDIRECT, OR  CONSEQUENTIAL DAMAGES  OR  ANY DAMAGES
+dnl WHATSOEVER  RESULTING FROM  LOSS OF  USE, DATA  OR PROFITS,  WHETHER  IN AN
+dnl ACTION OF CONTRACT, NEGLIGENCE OR  OTHER TORTIOUS ACTION, ARISING OUT OF OR
+dnl IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+dnl
+dnl                                              Martin Jacquet - November 2019
 dnl
 
 AC_PREREQ(2.59)
