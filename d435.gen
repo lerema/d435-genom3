@@ -23,7 +23,7 @@ component d435 {
     email		"openrobots@laas.fr";
     lang		"c";
     require	    "genom3 >= 2.99.26";
-    codels-require	"eigen3";
+    // codels-require	"librealsense";
 
     /* ---- Exceptions ---- */
 
@@ -43,7 +43,6 @@ component d435 {
         d435::seq5F disto;
 
         // sequence<string> port_names;
-
     };
 
     /* ---- Ports ---- */
