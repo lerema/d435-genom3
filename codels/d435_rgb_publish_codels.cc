@@ -60,7 +60,7 @@ d435_rgb_pub(const d435_RSdata_s *data, d435_frame_s *frame,
         // frame->pixels._buffer = cvFrame.data;
         frame->pixels._buffer = (uint8_t*)data->rgb.get_data();
 
-        // Get timestamp
+        // Create timestamp
         // If using time of publishing
         // struct timeval tv;
         // gettimeofday(&tv, NULL);

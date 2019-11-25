@@ -42,6 +42,7 @@ component d435 {
         d435::seq5F calib;
         d435::seq5F disto;
 
+        // sequence<string> port_names;
 
     };
 

@@ -48,6 +48,11 @@ genom_event
 d435_depth_pub(const d435_RSdata_s *data, d435_pc_s *pc,
                const d435_curr_pc *curr_pc, const genom_context self)
 {
+    // Read time from data struct
+    const unsigned long ms = data->depth.get_timestamp();
+    const uint8_t *rgb_data = data->rgb.get_data();
+    const uint w = data->rgb.get_width();
+
     rs2::pointcloud rs_pc;
     rs2::points points = rs_pc.calculate(data->depth);
     // Tell pointcloud object to map to this color frame
@@ -57,6 +62,20 @@ d435_depth_pub(const d435_RSdata_s *data, d435_pc_s *pc,
         d435_rs_error_detail d;
         snprintf(d.what, sizeof(d.what), "empty point cloud");
     }
+
+    // Create timestamp
+    // If using time of publishing
+    // struct timeval tv;
+    // gettimeofday(&tv, NULL);
+    // frame->timeStamp.sec = tv.tv_sec;
+    // frame->timeStamp.nsec = tv.tv_usec * 1000;
+
+    // Else if using time of capture
+    unsigned long s = floor(ms/1000);
+    unsigned long long ns = (ms - s*1000) * 1e6;
+    pc->timeStamp.sec = s;
+    pc->timeStamp.nsec = ns;
+
     if (genom_sequence_reserve(&(pc->points), points.size())  == -1) {
         d435_mem_error_detail d;
         snprintf(d.what, sizeof(d.what), "unable to allocate 3d point memory");
@@ -77,8 +96,13 @@ d435_depth_pub(const d435_RSdata_s *data, d435_pc_s *pc,
             pc->points._buffer[i].x = vertices[i].x;
             pc->points._buffer[i].y = vertices[i].y;
             pc->points._buffer[i].z = vertices[i].z;
+            // b[u,v] = pix[(u*w+v)*3] ; g[u,v] = pix[(u*w+v)*3+1] ; r[u,v] = pix[(u*w+v)*3+2]
         }
     }
+
+    // Update port data
+    *(curr_pc->data(self)) = *pc;
+    curr_pc->write(self);
 
     return d435_pause_pub;
 }
