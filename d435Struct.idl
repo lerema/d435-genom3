@@ -55,7 +55,7 @@ module d435 {
         unsigned short  height;         // max 1080
         unsigned short  width;          // max 1920
 
-        // Sequence of pixels for the frame, line by line (order = r,g,b)
+        // Sequence of pixels for the frame, line by line
         sequence<octet> pixels;
     };
 

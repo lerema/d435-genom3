@@ -22,6 +22,8 @@
  *                                              Martin Jacquet - November 2019
  */
 
+/* ---- Includes ---- */
+
 #pragma require "openrobots2-idl >= 2.0"
 
 #include "d435Struct.idl"
@@ -33,7 +35,6 @@ component d435 {
     email		"openrobots@laas.fr";
     lang		"c";
     require	    "genom3 >= 2.99.26";
-    // codels-require	"librealsense";
 
     /* ---- Exceptions ---- */
 
@@ -42,6 +43,11 @@ component d435 {
 
     /* ---- IDS ---- */
 
+    struct portinfo_s {
+      string<128> name;
+      or::time::ts last;
+    };
+
     ids {
         d435::pipe_s        pipe;
         d435::RSdata_s      data;
@@ -49,7 +55,7 @@ component d435 {
         d435::frame_s       frame;
         d435::pc_s          pc;
 
-        // sequence<string<128>>    port_names;
+        // sequence<portinfo_s>    ports;
     };
 
     /* ---- Ports ---- */
