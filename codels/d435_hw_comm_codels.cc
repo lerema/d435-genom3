@@ -27,6 +27,8 @@
 
 #include "codels.h"
 #include "fstream"
+#include <iostream>
+
 
 /* --- Task hw_comm ----------------------------------------------------- */
 
@@ -34,27 +36,31 @@
 /** Codel d435_comm_start of task hw_comm.
  *
  * Triggered by d435_start.
- * Yields to d435_pause_start, d435_poll.
+ * Yields to d435_poll.
  */
 genom_event
-d435_comm_start(const d435_pipe_s *pipe, const genom_context self)
+d435_comm_start(d435_pipe_s **pipe, bool *started,
+                const genom_context self)
 {
-    // Loop in start until pipe is initialized (through connect activity), then yield to poll
-    if (pipe->init)
-        return d435_poll;
-    else
-        return d435_pause_start;
+    *pipe = new d435_pipe_s();
+    *started = false;
+ std::cout << "hi" << std::endl;
+    return d435_poll;
 }
 
 
 /** Codel d435_comm_poll of task hw_comm.
  *
  * Triggered by d435_poll.
- * Yields to d435_read.
+ * Yields to d435_pause_poll, d435_read.
  */
 genom_event
 d435_comm_poll(d435_pipe_s **pipe, const genom_context self)
 {
+    // Loop in poll until pipe is initialized (through connect activity)
+    if (!(*pipe)->init)
+        return d435_pause_poll;
+
     // Wait for next set of frames from the camera
     (*pipe)->data = (*pipe)->pipe.wait_for_frames();
 
@@ -69,14 +75,14 @@ d435_comm_poll(d435_pipe_s **pipe, const genom_context self)
  */
 genom_event
 d435_comm_read(const d435_pipe_s *pipe, d435_RSdata_s **data,
-               const genom_context self)
+               bool *started, const genom_context self)
 {
     // Read RGB
     (*data)->rgb = pipe->data.get_color_frame();
     // Read RGBD
     (*data)->depth = pipe->data.get_depth_frame();
     // Update booleans
-    (*data)->init = true;
+    *started = true;
 
     return d435_poll;
 }

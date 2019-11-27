@@ -36,7 +36,6 @@ struct d435_pipe_s{
 };
 
 struct d435_RSdata_s{
-    bool                init = false;
     rs2::frame          depth;
     rs2::video_frame    rgb;
 };

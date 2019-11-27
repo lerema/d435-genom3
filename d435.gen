@@ -32,7 +32,7 @@
 
 component d435 {
     version	    "0.1";
-    email		"openrobots@laas.fr";
+    email		"martin.jacquet@laas.fr";
     lang		"c";
     require	    "genom3 >= 2.99.26";
 
@@ -51,6 +51,7 @@ component d435 {
     ids {
         d435::pipe_s        pipe;
         d435::RSdata_s      data;
+        boolean             started;
 
         d435::frame_s       frame;
         d435::pc_s          pc;
@@ -73,13 +74,13 @@ component d435 {
     const unsigned short depth_pub_period_ms = 100;
 
     task hw_comm {
-        codel<start> d435_comm_start(in pipe)
-            yield pause::start, poll;
+        codel<start> d435_comm_start(out pipe, out started)
+            yield poll;
 
         async codel<poll> d435_comm_poll(inout pipe)
-            yield read;
+            yield pause::poll, read;
 
-        codel<read> d435_comm_read(in pipe, out data)
+        codel<read> d435_comm_read(in pipe, out data, out started)
             yield poll;
 
         codel<stop> d435_comm_stop()
@@ -89,7 +90,7 @@ component d435 {
     task rgb_publish {
         period rgb_pub_period_ms ms;
 
-        codel<start> d435_rgb_start(in data)
+        codel<start> d435_rgb_start(in started)
             yield pause::start, pub;
 
         codel<pub> d435_rgb_pub(in data, inout frame, out curr_frame)
@@ -102,7 +103,7 @@ component d435 {
     task depth_publish {
         period depth_pub_period_ms ms;
 
-        codel<start> d435_depth_start(in data)
+        codel<start> d435_depth_start(in started)
             yield pause::start, pub;
 
         codel<pub> d435_depth_pub(in data, inout pc, out curr_pc)

@@ -28,7 +28,7 @@
 // d435.gen.
 
 = d435 component
-openrobots@laas.fr
+martin.jacquet@laas.fr
 0.1
 :toc: left
 

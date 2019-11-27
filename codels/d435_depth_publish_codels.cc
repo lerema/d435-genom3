@@ -36,10 +36,10 @@
  * Yields to d435_pause_start, d435_pub.
  */
 genom_event
-d435_depth_start(const d435_RSdata_s *data, const genom_context self)
+d435_depth_start(bool started, const genom_context self)
 {
     // Loop in start until data is initialized, then yield to poll
-    if (data->init)
+    if (started)
         return d435_pub;
     else
         return d435_pause_start;
@@ -94,7 +94,7 @@ d435_depth_pub(const d435_RSdata_s *data, d435_pc_s *pc,
     // Get PC data
     const rs2::vertex *vertices = points.get_vertices();
     // const rs2::texture_coordinate *tex_coords = points.get_texture_coordinates();
-
+    pc->length = points.size();
     // Iterate over PC
     for (uint i = 0; i < points.size(); i++)
     {
