@@ -70,7 +70,7 @@ a|.Data structure
  *** `double` `qz`
  ** `sequence< struct ::d435::color >` `colors`
  *** `octet` `r`
- *** `octet` `v`
+ *** `octet` `g`
  *** `octet` `b`
 
 |===
