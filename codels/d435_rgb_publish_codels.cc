@@ -69,15 +69,15 @@ d435_rgb_pub(const d435_RSdata_s *data, d435_frame_s *frame,
         // If using time of publishing
         // struct timeval tv;
         // gettimeofday(&tv, NULL);
-        // frame->timeStamp.sec = tv.tv_sec;
-        // frame->timeStamp.nsec = tv.tv_usec * 1000;
+        // frame->ts.sec = tv.tv_sec;
+        // frame->ts.nsec = tv.tv_usec * 1000;
 
         // Else if using time of capture
         unsigned long ms = data->rgb.get_timestamp();
         unsigned long s = floor(ms/1000);
         unsigned long long ns = (ms - s*1000) * 1e6;
-        frame->timeStamp.sec = s;
-        frame->timeStamp.nsec = ns;
+        frame->ts.sec = s;
+        frame->ts.nsec = ns;
     }
 
     // Update port data

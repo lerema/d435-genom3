@@ -42,7 +42,7 @@ module d435 {
     };
 
     struct pc_s {
-    or::time::ts timeStamp;
+    or::time::ts ts;
     boolean                 isRegistered;   // Is there color info on the point cloud
     unsigned short          length;         // Number of points in cloud
 
@@ -52,7 +52,7 @@ module d435 {
 
 
     struct frame_s {
-        or::time::ts    timeStamp;
+        or::time::ts    ts;
         unsigned short  height;         // max 1080
         unsigned short  width;          // max 1920
 

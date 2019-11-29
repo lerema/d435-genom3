@@ -55,7 +55,7 @@ endif::[]
 a|.Data structure
 [disc]
  * `struct ::d435::pc_s` `curr_pc`
- ** `struct ::or::time::ts` `timeStamp`
+ ** `struct ::or::time::ts` `ts`
  *** `long` `sec`
  *** `long` `nsec`
  ** `boolean` `isRegistered`
@@ -86,7 +86,7 @@ a|.Data structure
 a|.Data structure
 [disc]
  * `struct ::d435::frame_s` `curr_frame`
- ** `struct ::or::time::ts` `timeStamp`
+ ** `struct ::or::time::ts` `ts`
  *** `long` `sec`
  *** `long` `nsec`
  ** `unsigned short` `height`

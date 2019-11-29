@@ -74,14 +74,14 @@ d435_depth_pub(const d435_RSdata_s *data, d435_pc_s *pc,
     // If using time of publishing
     // struct timeval tv;
     // gettimeofday(&tv, NULL);
-    // frame->timeStamp.sec = tv.tv_sec;
-    // frame->timeStamp.nsec = tv.tv_usec * 1000;
+    // frame->ts.sec = tv.tv_sec;
+    // frame->ts.nsec = tv.tv_usec * 1000;
 
     // Else if using time of capture
     unsigned long s = floor(ms/1000);
     unsigned long long ns = (ms - s*1000) * 1e6;
-    pc->timeStamp.sec = s;
-    pc->timeStamp.nsec = ns;
+    pc->ts.sec = s;
+    pc->ts.nsec = ns;
 
     if (genom_sequence_reserve(&(pc->points), points.size())  == -1) {
         d435_mem_error_detail d;
