@@ -37,7 +37,12 @@ struct d435_pipe_s{
 
 struct d435_RSdata_s{
     rs2::frame          depth;
-    rs2::video_frame    rgb;
+    rs2::frame          rgb;
+
+    d435_RSdata_s(rs2::frameset data) {
+        rgb = data.get_color_frame();
+        depth = data.get_depth_frame();
+    };
 };
 
 #endif /* H_REALSENSE_CODELS */

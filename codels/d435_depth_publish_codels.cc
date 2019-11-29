@@ -25,7 +25,7 @@
 
 #include "d435_c_types.h"
 
-#include "codels.h"
+#include "codels.hpp"
 
 /* --- Task depth_publish ----------------------------------------------- */
 

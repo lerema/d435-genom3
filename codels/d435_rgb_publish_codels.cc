@@ -25,8 +25,8 @@
 
 #include "d435_c_types.h"
 
-#include "codels.h"
-// #include "opencv2/opencv.hpp"
+#include "codels.hpp"
+#include "iostream"
 
 /* --- Task rgb_publish ------------------------------------------------- */
 
@@ -57,16 +57,13 @@ d435_rgb_pub(const d435_RSdata_s *data, d435_frame_s *frame,
              const d435_curr_frame *curr_frame,
              const genom_context self)
 {
-    const uint w = data->rgb.get_width();
-    const uint h = data->rgb.get_height();
+    rs2::video_frame video_data = data->rgb;
+    const uint w = video_data.get_width();
+    const uint h = video_data.get_height();
 
     if (w*h*3 <= frame->pixels._length)
     {
-
-        // cv::Mat cvFrame(cv::Size(w, h), CV_8UC3, (void*)data->rgb.get_data(), cv::Mat::AUTO_STEP);
-        // cv::cvtColor(cvFrame, cvFrame, cv::COLOR_BGR2RGB);
-        // frame->pixels._buffer = cvFrame.data;
-        frame->pixels._buffer = (uint8_t*)data->rgb.get_data();
+        frame->pixels._buffer = (uint8_t*)video_data.get_data();
 
         // Create timestamp
         // If using time of publishing

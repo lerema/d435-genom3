@@ -25,9 +25,9 @@
 
 #include "d435_c_types.h"
 
-#include "codels.h"
+#include "codels.hpp"
 #include "fstream"
-#include <iostream>
+#include "iostream"
 
 
 /* --- Task hw_comm ----------------------------------------------------- */
@@ -44,7 +44,6 @@ d435_comm_start(d435_pipe_s **pipe, bool *started,
 {
     *pipe = new d435_pipe_s();
     *started = false;
- std::cout << "hi" << std::endl;
     return d435_poll;
 }
 
@@ -112,20 +111,22 @@ genom_event
 d435_connect_start(d435_ids *ids, const d435_calib *calib,
                    const d435_disto *disto, const genom_context self)
 {
+    std::cout << "d435: Initializing connection to hardware... ";
+
     // Start streaming
     rs2::pipeline_profile pipe_profile = ids->pipe->pipe.start();
 
     // Set configuration as written in the .json calibration file
     rs2::device dev = pipe_profile.get_device();
     rs400::advanced_mode advanced = dev.as<rs400::advanced_mode>();
-    std::ifstream t("config/settings_intel.json");
+    std::ifstream t("/home/mjacquet/RIS/wd_genom/src/d435-genom3/config/settings_intel.json");
     std::string preset_json((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
     advanced.load_json(preset_json);
 
     // Get intrinsics
-    rs2::video_stream_profile stream = pipe_profile.get_stream(RS2_STREAM_DEPTH).as<rs2::video_stream_profile>();
-    const int h = stream.height();
-    const int w = stream.width();
+    rs2::video_stream_profile stream = pipe_profile.get_stream(RS2_STREAM_COLOR).as<rs2::video_stream_profile>();
+    const uint h = stream.height();
+    const uint w = stream.width();
 
     rs2_intrinsics intrinsics = stream.get_intrinsics();
     float k[5] = { intrinsics.ppx,
@@ -155,6 +156,7 @@ d435_connect_start(d435_ids *ids, const d435_calib *calib,
         d435_mem_error_detail d;
         snprintf(d.what, sizeof(d.what), "unable to allocate rgb frame memory");
     }
+    ids->frame.pixels._length = h*w*3;
 
     // Initialize sequence for point cloud
     ids->pc.isRegistered = false;
@@ -170,6 +172,10 @@ d435_connect_start(d435_ids *ids, const d435_calib *calib,
 
     // Init boolean
     ids->pipe->init = true;
+
+    ids->data = new d435_RSdata_s(ids->pipe->data);
+
+    std::cout << "done" << std::endl;
 
     return d435_ether;
 }
