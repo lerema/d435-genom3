@@ -86,18 +86,6 @@ d435_rgb_pub(const d435_RSdata_s *data, d435_frame_s *frame,
 }
 
 
-/** Codel d435_rgb_stop of task rgb_publish.
- *
- * Triggered by d435_stop.
- * Yields to d435_ether.
- */
-genom_event
-d435_rgb_stop(const genom_context self)
-{
-  /* skeleton sample: insert your code */
-  /* skeleton sample */ return d435_ether;
-}
-
 
 /* --- Activity set_fps ------------------------------------------------- */
 

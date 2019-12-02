@@ -124,16 +124,3 @@ d435_depth_pub(const d435_RSdata_s *data, d435_pc_s *pc,
 
     return d435_pause_pub;
 }
-
-
-/** Codel d435_depth_stop of task depth_publish.
- *
- * Triggered by d435_stop.
- * Yields to d435_ether.
- */
-genom_event
-d435_depth_stop(const genom_context self)
-{
-  /* skeleton sample: insert your code */
-  /* skeleton sample */ return d435_ether;
-}

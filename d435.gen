@@ -82,9 +82,6 @@ component d435 {
 
         codel<read> d435_comm_read(in pipe, out data, out started)
             yield poll;
-
-        codel<stop> d435_comm_stop()
-            yield ether;
     };
 
     task rgb_publish {
@@ -95,9 +92,6 @@ component d435 {
 
         codel<pub> d435_rgb_pub(in data, inout frame, out rgb_out)
             yield pause::pub;
-
-        codel<stop> d435_rgb_stop()
-            yield ether;
     };
 
     task depth_publish {
@@ -108,9 +102,6 @@ component d435 {
 
         codel<pub> d435_depth_pub(in data, inout pc, out pc_out)
             yield pause::pub;
-
-        codel<stop> d435_depth_stop()
-            yield ether;
     };
 
     /* ---- Activities ---- */

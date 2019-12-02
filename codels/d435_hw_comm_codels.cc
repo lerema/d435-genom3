@@ -87,18 +87,6 @@ d435_comm_read(const d435_pipe_s *pipe, d435_RSdata_s **data,
 }
 
 
-/** Codel d435_comm_stop of task hw_comm.
- *
- * Triggered by d435_stop.
- * Yields to d435_ether.
- */
-genom_event
-d435_comm_stop(const genom_context self)
-{
-  /* skeleton sample: insert your code */
-  /* skeleton sample */ return d435_ether;
-}
-
 
 /* --- Activity connect ------------------------------------------------- */
 
