@@ -109,10 +109,7 @@ d435_comm_stop(const genom_context self)
  */
 genom_event
 d435_connect_start(d435_ids *ids, const d435_calib *calib,
-                   const d435_disto *disto,
-                   const d435_rgb_out *rgb_out,
-                   const d435_pc_out *pc_out,
-                   const genom_context self)
+                   const d435_disto *disto, const genom_context self)
 {
     std::cout << "d435: Initializing connection to hardware... ";
 

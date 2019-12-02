@@ -128,7 +128,7 @@ component d435 {
     activity connect () {
         task hw_comm;
 
-        codel<start> d435_connect_start(out ::ids, out calib, out disto, out rgb_out, out pc_out)
+        codel<start> d435_connect_start(out ::ids, out calib, out disto)
             yield ether;
     };
 
