@@ -46,28 +46,24 @@ endif::[]
 == Ports
 
 
-[[curr_pc]]
-=== curr_pc (out)
+[[pc_out]]
+=== pc_out (out)
 
 
 [role="small", width="50%", float="right", cols="1"]
 |===
 a|.Data structure
 [disc]
- * `struct ::d435::pc_s` `curr_pc`
+ * `struct ::d435::pc_s` `pc_out`
  ** `struct ::or::time::ts` `ts`
  *** `long` `sec`
  *** `long` `nsec`
  ** `boolean` `isRegistered`
  ** `unsigned short` `length`
  ** `sequence< struct ::d435::pos >` `points`
- *** `double` `x`
- *** `double` `y`
- *** `double` `z`
- *** `double` `qw`
- *** `double` `qx`
- *** `double` `qy`
- *** `double` `qz`
+ *** `float` `x`
+ *** `float` `y`
+ *** `float` `z`
  ** `sequence< struct ::d435::color >` `colors`
  *** `octet` `r`
  *** `octet` `g`
@@ -77,15 +73,15 @@ a|.Data structure
 
 '''
 
-[[curr_frame]]
-=== curr_frame (out)
+[[rgb_out]]
+=== rgb_out (out)
 
 
 [role="small", width="50%", float="right", cols="1"]
 |===
 a|.Data structure
 [disc]
- * `struct ::d435::frame_s` `curr_frame`
+ * `struct ::d435::frame_s` `rgb_out`
  ** `struct ::or::time::ts` `ts`
  *** `long` `sec`
  *** `long` `nsec`
@@ -154,6 +150,8 @@ a|.Context
 a|.Context
 [disc]
   * In task `<<hw_comm>>`
+  * Updates port `<<pc_out>>`
+  * Updates port `<<rgb_out>>`
   * Updates port `<<calib>>`
   * Updates port `<<disto>>`
 |===
@@ -182,7 +180,7 @@ a|.Context
 a|.Context
 [disc]
   * Frequency 100.0 _Hz_
-* Updates port `<<curr_frame>>`
+* Updates port `<<rgb_out>>`
 |===
 
 '''
@@ -195,7 +193,7 @@ a|.Context
 a|.Context
 [disc]
   * Frequency 10.0 _Hz_
-* Updates port `<<curr_pc>>`
+* Updates port `<<pc_out>>`
 |===
 
 '''

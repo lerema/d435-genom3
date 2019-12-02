@@ -61,9 +61,9 @@ component d435 {
 
     /* ---- Ports ---- */
 
-    port            out d435::pc_s     curr_pc;
-    // port multiple   out d435::frame_s  curr_frame;
-    port            out d435::frame_s  curr_frame;
+    port            out d435::pc_s     pc_out;
+    // port multiple   out d435::frame_s  rgb_out;
+    port            out d435::frame_s  rgb_out;
     port            out d435::seq5F    calib;
     port            out d435::seq5F    disto;
 
@@ -93,7 +93,7 @@ component d435 {
         codel<start> d435_rgb_start(in started)
             yield pause::start, pub;
 
-        codel<pub> d435_rgb_pub(in data, inout frame, out curr_frame)
+        codel<pub> d435_rgb_pub(in data, inout frame, out rgb_out)
             yield pause::pub;
 
         codel<stop> d435_rgb_stop()
@@ -106,7 +106,7 @@ component d435 {
         codel<start> d435_depth_start(in started)
             yield pause::start, pub;
 
-        codel<pub> d435_depth_pub(in data, inout pc, out curr_pc)
+        codel<pub> d435_depth_pub(in data, inout pc, out pc_out)
             yield pause::pub;
 
         codel<stop> d435_depth_stop()
@@ -128,7 +128,7 @@ component d435 {
     activity connect () {
         task hw_comm;
 
-        codel<start> d435_connect_start(out ::ids, out calib, out disto)
+        codel<start> d435_connect_start(out ::ids, out calib, out disto, out rgb_out, out pc_out)
             yield ether;
     };
 

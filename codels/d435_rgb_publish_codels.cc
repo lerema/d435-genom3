@@ -54,8 +54,7 @@ d435_rgb_start(bool started, const genom_context self)
  */
 genom_event
 d435_rgb_pub(const d435_RSdata_s *data, d435_frame_s *frame,
-             const d435_curr_frame *curr_frame,
-             const genom_context self)
+             const d435_rgb_out *rgb_out, const genom_context self)
 {
     rs2::video_frame video_data = data->rgb;
     const uint w = video_data.get_width();
@@ -71,7 +70,6 @@ d435_rgb_pub(const d435_RSdata_s *data, d435_frame_s *frame,
         // gettimeofday(&tv, NULL);
         // frame->ts.sec = tv.tv_sec;
         // frame->ts.nsec = tv.tv_usec * 1000;
-
         // Else if using time of capture
         unsigned long ms = data->rgb.get_timestamp();
         unsigned long s = floor(ms/1000);
@@ -81,8 +79,8 @@ d435_rgb_pub(const d435_RSdata_s *data, d435_frame_s *frame,
     }
 
     // Update port data
-    *(curr_frame->data(self)) = *frame;
-    curr_frame->write(self);
+    *(rgb_out->data(self)) = *frame;
+    rgb_out->write(self);
 
     return d435_pause_pub;
 }
@@ -111,6 +109,6 @@ d435_rgb_stop(const genom_context self)
 genom_event
 d435_set_frequency(uint16_t fps, const genom_context self)
 {
-  /* skeleton sample: insert your code */
-  /* skeleton sample */ return d435_ether;
+    // TODO
+    return d435_ether;
 }

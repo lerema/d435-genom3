@@ -26,6 +26,7 @@
 #include "d435_c_types.h"
 
 #include "codels.hpp"
+#include "iostream"
 
 /* --- Task depth_publish ----------------------------------------------- */
 
@@ -53,15 +54,21 @@ d435_depth_start(bool started, const genom_context self)
  */
 genom_event
 d435_depth_pub(const d435_RSdata_s *data, d435_pc_s *pc,
-               const d435_curr_pc *curr_pc, const genom_context self)
+               const d435_pc_out *pc_out, const genom_context self)
 {
-    // Read time from data struct
+    // Read from data struct
     const unsigned long ms = data->depth.get_timestamp();
     // const uint8_t *rgb_data = data->rgb.get_data();
     // const uint w = data->rgb.get_width();
 
+    // Downsample point cloud, otherwise publishing crashes (to much memory to allocate in the port)
+    rs2::decimation_filter dec_filter;
+    dec_filter.set_option(RS2_OPTION_FILTER_MAGNITUDE, (float)4.0);
+    auto tmp = dec_filter.process(data->depth);
+
     rs2::pointcloud rs_pc;
-    rs2::points points = rs_pc.calculate(data->depth);
+    // rs2::points points = rs_pc.calculate(data->depth);
+    rs2::points points = rs_pc.calculate(tmp);
     // Tell pointcloud object to map to this color frame
     // rs_pc.map_to(data->rgb);
 
@@ -76,40 +83,44 @@ d435_depth_pub(const d435_RSdata_s *data, d435_pc_s *pc,
     // gettimeofday(&tv, NULL);
     // frame->ts.sec = tv.tv_sec;
     // frame->ts.nsec = tv.tv_usec * 1000;
-
     // Else if using time of capture
     unsigned long s = floor(ms/1000);
     unsigned long long ns = (ms - s*1000) * 1e6;
     pc->ts.sec = s;
     pc->ts.nsec = ns;
 
+    // Allocate memory for pc sequences
     if (genom_sequence_reserve(&(pc->points), points.size())  == -1) {
         d435_mem_error_detail d;
         snprintf(d.what, sizeof(d.what), "unable to allocate 3d point memory");
     }
-    if (genom_sequence_reserve(&(pc->colors), points.size())  == -1) {
-        d435_mem_error_detail d;
-        snprintf(d.what, sizeof(d.what), "unable to allocate points color memory");
-    }
+    if (pc->isRegistered)
+        if (genom_sequence_reserve(&(pc->colors), points.size())  == -1) {
+            d435_mem_error_detail d;
+            snprintf(d.what, sizeof(d.what), "unable to allocate points color memory");
+        }
+
     // Get PC data
     const rs2::vertex *vertices = points.get_vertices();
     // const rs2::texture_coordinate *tex_coords = points.get_texture_coordinates();
-    pc->length = points.size();
-    // Iterate over PC
+    uint valid_points = 0;
     for (uint i = 0; i < points.size(); i++)
     {
-        if (vertices[i].z)
+        if (vertices[i].z > 0.01)
         {
             pc->points._buffer[i].x = vertices[i].x;
             pc->points._buffer[i].y = vertices[i].y;
             pc->points._buffer[i].z = vertices[i].z;
             // b[u,v] = pix[(u*w+v)*3] ; g[u,v] = pix[(u*w+v)*3+1] ; r[u,v] = pix[(u*w+v)*3+2]
+            valid_points++;
         }
     }
+    pc->length = valid_points;
+    pc->points._length = valid_points;
 
     // Update port data
-    *(curr_pc->data(self)) = *pc;
-    curr_pc->write(self);
+    *(pc_out->data(self)) = *pc;
+    pc_out->write(self);
 
     return d435_pause_pub;
 }

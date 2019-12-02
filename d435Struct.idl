@@ -38,7 +38,7 @@ module d435 {
         octet r, g, b;
     };
     struct pos {
-        double x, y, z;
+        float x, y, z;
     };
 
     struct pc_s {
