@@ -97,9 +97,9 @@ d435_depth_pub(const d435_RSdata_s *data, d435_pc_s *pc,
     // Get PC data
     const rs2::vertex *vertices = points.get_vertices();
     // const rs2::texture_coordinate *tex_coords = points.get_texture_coordinates();
-    uint16_t valid_points = 0;
+    uint32_t valid_points = 0;
     uint8_t max_depth = 3;
-    for (uint16_t i = 0; i < points.size(); i++)
+    for (uint32_t i = 0; i < points.size(); i++)
     {
         if (vertices[i].z > 0.01 && std::abs(vertices[i].x) < max_depth && std::abs(vertices[i].y) < max_depth && vertices[i].z < max_depth)
         {

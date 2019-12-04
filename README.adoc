@@ -59,7 +59,7 @@ a|.Data structure
  *** `long` `sec`
  *** `long` `nsec`
  ** `boolean` `isRegistered`
- ** `unsigned short` `length`
+ ** `unsigned long` `length`
  ** `sequence< struct ::d435::pos >` `points`
  *** `float` `x`
  *** `float` `y`
