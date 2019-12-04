@@ -103,9 +103,9 @@ d435_depth_pub(const d435_RSdata_s *data, d435_pc_s *pc,
     {
         if (vertices[i].z > 0.01 && std::abs(vertices[i].x) < max_depth && std::abs(vertices[i].y) < max_depth && vertices[i].z < max_depth)
         {
-            pc->points._buffer[i].x = vertices[i].x;
-            pc->points._buffer[i].y = vertices[i].y;
-            pc->points._buffer[i].z = vertices[i].z;
+            pc->points._buffer[valid_points].x = vertices[i].x;
+            pc->points._buffer[valid_points].y = vertices[i].y;
+            pc->points._buffer[valid_points].z = vertices[i].z;
             // b[u,v] = pix[(u*w+v)*3] ; g[u,v] = pix[(u*w+v)*3+1] ; r[u,v] = pix[(u*w+v)*3+2]
             valid_points++;
         }
