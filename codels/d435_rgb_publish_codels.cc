@@ -57,8 +57,8 @@ d435_rgb_pub(const d435_RSdata_s *data, d435_frame_s *frame,
              const d435_rgb_out *rgb_out, const genom_context self)
 {
     rs2::video_frame video_data = data->rgb;
-    const uint w = video_data.get_width();
-    const uint h = video_data.get_height();
+    const uint16_t w = video_data.get_width();
+    const uint16_t h = video_data.get_height();
 
     if (w*h*3 <= frame->pixels._length)
     {
@@ -71,9 +71,9 @@ d435_rgb_pub(const d435_RSdata_s *data, d435_frame_s *frame,
         // frame->ts.sec = tv.tv_sec;
         // frame->ts.nsec = tv.tv_usec * 1000;
         // Else if using time of capture
-        unsigned long ms = data->rgb.get_timestamp();
-        unsigned long s = floor(ms/1000);
-        unsigned long long ns = (ms - s*1000) * 1e6;
+        uint32_t ms = data->rgb.get_timestamp();
+        uint32_t s = floor(ms/1000);
+        uint64_t ns = (ms - s*1000) * 1e6;
         frame->ts.sec = s;
         frame->ts.nsec = ns;
     }
