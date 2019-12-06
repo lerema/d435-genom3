@@ -39,11 +39,13 @@
  * Yields to d435_poll.
  */
 genom_event
-d435_comm_start(d435_pipe_s **pipe, bool *started,
+d435_comm_start(d435_ids *ids, const d435_extrinsics *extrinsics,
                 const genom_context self)
 {
-    *pipe = new d435_pipe_s();
-    *started = false;
+    *extrinsics->data(self) = {0,0,0, 0,0,0,0};
+    extrinsics->write(self);
+    ids->pipe = new d435_pipe_s();
+    ids->started = false;
     return d435_poll;
 }
 
@@ -96,8 +98,8 @@ d435_comm_read(const d435_pipe_s *pipe, d435_RSdata_s **data,
  * Yields to d435_ether.
  */
 genom_event
-d435_connect_start(d435_ids *ids, const d435_calib *calib,
-                   const d435_disto *disto, const genom_context self)
+d435_connect_start(d435_ids *ids, const d435_intrinsics *intrinsics,
+                   const genom_context self)
 {
     std::cout << "d435: Initializing connection to hardware... ";
 
@@ -116,24 +118,23 @@ d435_connect_start(d435_ids *ids, const d435_calib *calib,
     const uint h = stream.height();
     const uint w = stream.width();
 
-    rs2_intrinsics intrinsics = stream.get_intrinsics();
-    float k[5] = { intrinsics.ppx,
-                   intrinsics.ppy,
-                   intrinsics.fx,
-                   intrinsics.fy,
+    rs2_intrinsics intrinsics_rs2 = stream.get_intrinsics();
+    float k[5] = { intrinsics_rs2.ppx,
+                   intrinsics_rs2.ppy,
+                   intrinsics_rs2.fx,
+                   intrinsics_rs2.fy,
                    0 };
-    float* d = intrinsics.coeffs;
+    float* d = intrinsics_rs2.coeffs;
 
     // Initialize intrinsics and publish
-    calib->data(self)->_length = 5;
-    disto->data(self)->_length = 5;
+    intrinsics->data(self)->calib._length = 5;
+    intrinsics->data(self)->disto._length = 5;
     for (int i=0; i<5; i++)
     {
-        calib->data(self)->_buffer[i] = k[i];
-        disto->data(self)->_buffer[i] = d[i];
+        intrinsics->data(self)->calib._buffer[i] = k[i];
+        intrinsics->data(self)->disto._buffer[i] = d[i];
     }
-    calib->write(self);
-    disto->write(self);
+    intrinsics->write(self);
 
     // Initialize sequence for frame
     ids->frame.height = h;
@@ -163,6 +164,34 @@ d435_connect_start(d435_ids *ids, const d435_calib *calib,
     ids->data = new d435_RSdata_s(ids->pipe->data);
 
     std::cout << "done" << std::endl;
+
+    return d435_ether;
+}
+
+
+/* --- Activity set_extrinsics ------------------------------------------ */
+
+/** Codel d435_set_extrinsics of activity set_extrinsics.
+ *
+ * Triggered by d435_start.
+ * Yields to d435_ether.
+ */
+genom_event
+d435_set_extrinsics(const sequence7_double *ext_values,
+                    const d435_extrinsics *extrinsics,
+                    const genom_context self)
+{
+    d435_extrinsics_s ext;
+    ext = {ext_values->_buffer[0],
+           ext_values->_buffer[1],
+           ext_values->_buffer[2],
+           ext_values->_buffer[3],
+           ext_values->_buffer[4],
+           ext_values->_buffer[5],
+           ext_values->_buffer[6]
+    };
+    *extrinsics->data(self) = ext;
+    extrinsics->write(self);
 
     return d435_ether;
 }

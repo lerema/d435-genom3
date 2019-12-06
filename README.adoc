@@ -93,15 +93,17 @@ a|.Data structure
 
 '''
 
-[[calib]]
-=== calib (out)
+[[intrinsics]]
+=== intrinsics (out)
 
 
 [role="small", width="50%", float="right", cols="1"]
 |===
 a|.Data structure
 [disc]
- * `sequence< float, 5 >` `calib`
+ * `struct ::d435::intrinsics_s` `intrinsics`
+ ** `sequence< float, 5 >` `calib`
+ ** `sequence< float, 5 >` `disto`
 
 |===
 
@@ -116,6 +118,27 @@ a|.Data structure
 a|.Data structure
 [disc]
  * `sequence< float, 5 >` `disto`
+
+|===
+
+'''
+
+[[extrinsics]]
+=== extrinsics (out)
+
+
+[role="small", width="50%", float="right", cols="1"]
+|===
+a|.Data structure
+[disc]
+ * `struct ::d435::extrinsics_s` `extrinsics`
+ ** `double` `tx`
+ ** `double` `ty`
+ ** `double` `tz`
+ ** `double` `qw`
+ ** `double` `qx`
+ ** `double` `qy`
+ ** `double` `qz`
 
 |===
 
@@ -150,10 +173,24 @@ a|.Context
 a|.Context
 [disc]
   * In task `<<hw_comm>>`
-  * Updates port `<<pc_out>>`
-  * Updates port `<<rgb_out>>`
-  * Updates port `<<calib>>`
-  * Updates port `<<disto>>`
+  * Updates port `<<intrinsics>>`
+|===
+
+'''
+
+[[set_extrinsics]]
+=== set_extrinsics (activity)
+
+[role="small", width="50%", float="right", cols="1"]
+|===
+a|.Inputs
+[disc]
+ * `sequence< double, 7 >` `ext_values`
+
+a|.Context
+[disc]
+  * In task `<<hw_comm>>`
+  * Updates port `<<extrinsics>>`
 |===
 
 '''
@@ -168,6 +205,7 @@ a|.Context
 a|.Context
 [disc]
   * Free running
+* Updates port `<<extrinsics>>`
 |===
 
 '''
@@ -192,7 +230,7 @@ a|.Context
 |===
 a|.Context
 [disc]
-  * Frequency 0 _Hz_
+  * Frequency 10.0 _Hz_
 * Updates port `<<pc_out>>`
 |===
 

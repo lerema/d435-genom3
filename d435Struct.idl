@@ -31,16 +31,13 @@
 
 module d435 {
 
-    // const unsigned short pcMaxSize = 20000;    // arbitrary ; unused right now
-    // const unsigned long pixMaxSize = 6220800;  // 1920*1080*3 ; unused right now
-
-    struct color {
-        octet r, g, b;
-    };
+    /* ---- Point cloud ---- */
     struct pos {
         float x, y, z;
     };
-
+    struct color {
+        octet r, g, b;
+    };
     struct pc_s {
         or::time::ts ts;
         boolean                 isRegistered;   // Is there color info on the point cloud
@@ -51,19 +48,28 @@ module d435 {
     };
 
 
+
+    /* ---- RGB frame ---- */
     struct frame_s {
         or::time::ts    ts;
-        unsigned short  height;         // max 1080
-        unsigned short  width;          // max 1920
+        unsigned short  height;
+        unsigned short  width;
 
         // Sequence of pixels for the frame, line by line
         sequence<octet> pixels;
     };
 
-    native pipe_s;                      // RealSense pipeline, encapsulating the actual device and sensors
-    native RSdata_s;                    // Encapsulating RealSense data frames
+    /* ---- Realsense natives ---- */
+    native pipe_s;                              // RealSense pipeline, encapsulating the actual device and sensors
+    native RSdata_s;                            // Encapsulating RealSense data frames
 
-    typedef sequence<float,5> seq5F;    // Calibration matrix (fx, fy, cx, cy, gamma) and Distortion coefficients
+    /* ---- Camera calibration ---- */
+    struct intrinsics_s {                       // Calibration matrix (fx, fy, cx, cy, gamma) and Distortion coefficients
+        sequence<float,5>   calib, disto;
+    };
+    struct extrinsics_s {                       // Extrinsic transformation from camera frame to world frame (or, usually, body frame)
+        double tx, ty, tz, qw, qx, qy, qz;
+    };
 
 };
 

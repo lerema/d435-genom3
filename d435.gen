@@ -61,12 +61,11 @@ component d435 {
 
     /* ---- Ports ---- */
 
-    port            out d435::pc_s     pc_out;
-    // port multiple   out d435::frame_s  rgb_out;
-    port            out d435::frame_s  rgb_out;
-    port            out d435::seq5F    calib;
-    port            out d435::seq5F    disto;
-
+    port            out d435::pc_s          pc_out;
+    // port multiple   out d435::frame_s       rgb_out;
+    port            out d435::frame_s       rgb_out;
+    port            out d435::intrinsics_s  intrinsics;
+    port            out d435::extrinsics_s  extrinsics;
 
     /* ---- Tasks ---- */
 
@@ -74,7 +73,7 @@ component d435 {
     const unsigned short depth_pub_period_ms = 100;
 
     task hw_comm {
-        codel<start> d435_comm_start(out pipe, out started)
+        codel<start> d435_comm_start(out ::ids, out extrinsics)
             yield poll;
 
         async codel<poll> d435_comm_poll(inout pipe)
@@ -119,8 +118,16 @@ component d435 {
     activity connect () {
         task hw_comm;
 
-        codel<start> d435_connect_start(out ::ids, out calib, out disto)
+        codel<start> d435_connect_start(out ::ids, out intrinsics)
             yield ether;
     };
 
+    activity set_extrinsics(in sequence<double,7> ext_values) {
+        task hw_comm;
+
+        codel<start> d435_set_extrinsics(in ext_values, out extrinsics)
+            yield ether;
+    };
+
+    /* ---- Functions ---- */
 };
