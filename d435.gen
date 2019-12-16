@@ -122,7 +122,7 @@ component d435 {
             yield ether;
     };
 
-    activity set_extrinsics(in sequence<double,7> ext_values) {
+    activity set_extrinsics(in sequence<double,6> ext_values) {
         task hw_comm;
 
         codel<start> d435_set_extrinsics(in ext_values, out extrinsics)

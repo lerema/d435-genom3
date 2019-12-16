@@ -68,7 +68,7 @@ module d435 {
         sequence<float,5>   calib, disto;
     };
     struct extrinsics_s {                       // Extrinsic transformation from camera frame to world frame (or, usually, body frame)
-        double tx, ty, tz, qw, qx, qy, qz;
+        double tx, ty, tz, roll, pitch, yaw;
     };
 
 };

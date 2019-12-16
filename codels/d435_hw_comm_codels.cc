@@ -187,8 +187,7 @@ d435_set_extrinsics(const sequence7_double *ext_values,
            ext_values->_buffer[2],
            ext_values->_buffer[3],
            ext_values->_buffer[4],
-           ext_values->_buffer[5],
-           ext_values->_buffer[6]
+           ext_values->_buffer[5]
     };
     *extrinsics->data(self) = ext;
     extrinsics->write(self);
