@@ -142,20 +142,20 @@ d435_connect_start(d435_ids *ids, const d435_intrinsics *intrinsics,
 
     // ids->frame.pixels._maximum = h*w*3;
     if (genom_sequence_reserve(&(ids->frame.pixels), h*w*3)  == -1) {
-        d435_mem_error_detail d;
+        d435_e_mem_detail d;
         snprintf(d.what, sizeof(d.what), "unable to allocate rgb frame memory");
+        return d435_e_mem(&d,self);
     }
     ids->frame.pixels._length = h*w*3;
 
     // Initialize sequence for point cloud
     ids->pc.isRegistered = false;
-    if (genom_sequence_reserve(&(ids->pc.points), 0)  == -1) {
-        d435_mem_error_detail d;
-        snprintf(d.what, sizeof(d.what), "unable to allocate 3d point memory");
-    }
-    if (genom_sequence_reserve(&(ids->pc.colors), 0)  == -1) {
-        d435_mem_error_detail d;
-        snprintf(d.what, sizeof(d.what), "unable to allocate points color memory");
+    if (genom_sequence_reserve(&(ids->pc.points), 0)  == -1 ||
+        genom_sequence_reserve(&(ids->pc.colors), 0)  == -1)
+    {
+        d435_e_mem_detail d;
+        snprintf(d.what, sizeof(d.what), "unable to allocate point cloud memory");
+        return d435_e_mem(&d,self);
     }
 
     // Init boolean

@@ -67,8 +67,9 @@ d435_depth_pub(const d435_RSdata_s *data, d435_pc_s *pc,
     // rs_pc.map_to(data->rgb);
 
     if (points.size() == 0) {
-        d435_rs_error_detail d;
+        d435_e_rs_detail d;
         snprintf(d.what, sizeof(d.what), "empty point cloud");
+        return d435_e_rs(&d,self);
     }
 
     // Create timestamp
@@ -85,13 +86,15 @@ d435_depth_pub(const d435_RSdata_s *data, d435_pc_s *pc,
 
     // Allocate memory for pc sequences
     if (genom_sequence_reserve(&(pc->points), points.size())  == -1) {
-        d435_mem_error_detail d;
+        d435_e_mem_detail d;
         snprintf(d.what, sizeof(d.what), "unable to allocate 3d point memory");
+        return d435_e_mem(&d,self);
     }
     if (pc->isRegistered)
         if (genom_sequence_reserve(&(pc->colors), points.size())  == -1) {
-            d435_mem_error_detail d;
+            d435_e_mem_detail d;
             snprintf(d.what, sizeof(d.what), "unable to allocate points color memory");
+            return d435_e_mem(&d,self);
         }
 
     // Get PC data
