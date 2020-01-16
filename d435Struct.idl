@@ -67,7 +67,7 @@ module d435 {
     struct intrinsics_s {                       // Calibration matrix (fx, fy, cx, cy, gamma) and Distortion coefficients
         sequence<float,5>   calib, disto;
     };
-    struct extrinsics_s {                       // Extrinsic transformation from camera frame to world frame (or, usually, body frame)
+    struct extrinsics_s {                       // Extrinsic transformation from world frame (or, usually, body frame) to camera frame
         double tx, ty, tz, roll, pitch, yaw;
     };
 

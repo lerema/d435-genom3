@@ -135,10 +135,9 @@ a|.Data structure
  ** `double` `tx`
  ** `double` `ty`
  ** `double` `tz`
- ** `double` `qw`
- ** `double` `qx`
- ** `double` `qy`
- ** `double` `qz`
+ ** `double` `roll`
+ ** `double` `pitch`
+ ** `double` `yaw`
 
 |===
 
@@ -185,7 +184,7 @@ a|.Context
 |===
 a|.Inputs
 [disc]
- * `sequence< double, 7 >` `ext_values`
+ * `sequence< double, 6 >` `ext_values`
 
 a|.Context
 [disc]

@@ -42,7 +42,7 @@ genom_event
 d435_comm_start(d435_ids *ids, const d435_extrinsics *extrinsics,
                 const genom_context self)
 {
-    *extrinsics->data(self) = {0,0,0, 0,0,0,0};
+    *extrinsics->data(self) = {0,0,0, 0,0,0};
     extrinsics->write(self);
     ids->pipe = new d435_pipe_s();
     ids->started = false;
@@ -101,7 +101,7 @@ genom_event
 d435_connect_start(d435_ids *ids, const d435_intrinsics *intrinsics,
                    const genom_context self)
 {
-    std::cout << "d435: Initializing connection to hardware... ";
+    std::cout << "d435: initializing connection to hardware... ";
 
     // Start streaming
     rs2::pipeline_profile pipe_profile = ids->pipe->pipe.start();
@@ -119,10 +119,10 @@ d435_connect_start(d435_ids *ids, const d435_intrinsics *intrinsics,
     const uint w = stream.width();
 
     rs2_intrinsics intrinsics_rs2 = stream.get_intrinsics();
-    float k[5] = { intrinsics_rs2.ppx,
-                   intrinsics_rs2.ppy,
-                   intrinsics_rs2.fx,
+    float k[5] = { intrinsics_rs2.fx,
                    intrinsics_rs2.fy,
+                   intrinsics_rs2.ppx,
+                   intrinsics_rs2.ppy,
                    0 };
     float* d = intrinsics_rs2.coeffs;
 
@@ -177,7 +177,7 @@ d435_connect_start(d435_ids *ids, const d435_intrinsics *intrinsics,
  * Yields to d435_ether.
  */
 genom_event
-d435_set_extrinsics(const sequence7_double *ext_values,
+d435_set_extrinsics(const sequence6_double *ext_values,
                     const d435_extrinsics *extrinsics,
                     const genom_context self)
 {
