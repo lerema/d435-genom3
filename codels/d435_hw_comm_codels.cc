@@ -181,6 +181,7 @@ d435_set_extrinsics(const sequence6_double *ext_values,
                     const d435_extrinsics *extrinsics,
                     const genom_context self)
 {
+    std::cout << "d435: new extrinsics calibration: ";
     d435_extrinsics_s ext;
     ext = {ext_values->_buffer[0],
            ext_values->_buffer[1],
@@ -191,6 +192,12 @@ d435_set_extrinsics(const sequence6_double *ext_values,
     };
     *extrinsics->data(self) = ext;
     extrinsics->write(self);
+    std::cout << extrinsics->data(self)->tx << " " <<
+                 extrinsics->data(self)->ty << " " <<
+                 extrinsics->data(self)->tz << " " <<
+                 extrinsics->data(self)->roll << " " <<
+                 extrinsics->data(self)->pitch << " " <<
+                 extrinsics->data(self)->yaw << std::endl;
 
     return d435_ether;
 }
