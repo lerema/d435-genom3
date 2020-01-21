@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2019 LAAS/CNRS
+ * Copyright (c) 2019 LAAS/CNRS
  * All rights reserved.
  *
  * Redistribution  and  use  in  source  and binary  forms,  with  or  without
@@ -19,7 +19,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR  OTHER TORTIOUS ACTION, ARISING OUT OF OR
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- *                                           Anthony Mallet on Thu May 31 2018
+ *                                              Martin Jacquet - November 2019
  */
 #ifndef H_REALSENSE_CODELS
 #define H_REALSENSE_CODELS
