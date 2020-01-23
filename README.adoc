@@ -54,17 +54,17 @@ endif::[]
 |===
 a|.Data structure
 [disc]
- * `struct ::d435::pc_s` `pc_out`
+ * `struct ::data::pc` `pc_out`
  ** `struct ::or::time::ts` `ts`
  *** `long` `sec`
  *** `long` `nsec`
  ** `boolean` `isRegistered`
  ** `unsigned long` `length`
- ** `sequence< struct ::d435::pos >` `points`
+ ** `sequence< struct ::data::pos >` `points`
  *** `float` `x`
  *** `float` `y`
  *** `float` `z`
- ** `sequence< struct ::d435::color >` `colors`
+ ** `sequence< struct ::data::color >` `colors`
  *** `octet` `r`
  *** `octet` `g`
  *** `octet` `b`
@@ -81,7 +81,7 @@ a|.Data structure
 |===
 a|.Data structure
 [disc]
- * `struct ::d435::frame_s` `rgb_out`
+ * `struct ::data::rgb` `rgb_out`
  ** `struct ::or::time::ts` `ts`
  *** `long` `sec`
  *** `long` `nsec`
@@ -101,7 +101,7 @@ a|.Data structure
 |===
 a|.Data structure
 [disc]
- * `struct ::d435::intrinsics_s` `intrinsics`
+ * `struct ::camera::intrinsics_s` `intrinsics`
  ** `sequence< float, 5 >` `calib`
  ** `sequence< float, 5 >` `disto`
 
@@ -131,7 +131,7 @@ a|.Data structure
 |===
 a|.Data structure
 [disc]
- * `struct ::d435::extrinsics_s` `extrinsics`
+ * `struct ::camera::extrinsics_s` `extrinsics`
  ** `double` `tx`
  ** `double` `ty`
  ** `double` `tz`
