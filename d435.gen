@@ -70,7 +70,7 @@ component d435 {
 
     /* ---- Tasks ---- */
 
-    const unsigned short rgb_pub_period_ms = 10;
+    const unsigned short rgb_pub_period_ms = 16;
     const unsigned short depth_pub_period_ms = 100;
 
     task hw_comm {
@@ -105,16 +105,6 @@ component d435 {
     };
 
     /* ---- Activities ---- */
-
-    activity set_fps (
-        in string<64> serial = "img_pub" : "Out port name",
-        in unsigned short fps = 60 : "Publish frequency")
-    {
-        task rgb_publish;
-
-        codel<start> d435_set_frequency(in fps)
-            yield ether;
-    };
 
     activity connect () {
         task hw_comm;

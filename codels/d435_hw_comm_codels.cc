@@ -26,9 +26,6 @@
 #include "d435_c_types.h"
 
 #include "codels.hpp"
-#include "fstream"
-#include "iostream"
-
 
 /* --- Task hw_comm ----------------------------------------------------- */
 
@@ -109,8 +106,8 @@ d435_connect_start(d435_ids *ids, const d435_intrinsics *intrinsics,
     // Set configuration as written in the .json calibration file
     rs2::device dev = pipe_profile.get_device();
     rs400::advanced_mode advanced = dev.as<rs400::advanced_mode>();
-    std::ifstream t("/home/mjacquet/RIS/wd_genom/src/d435-genom3/config/settings_intel.json");
-    std::string preset_json((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+    std::ifstream config("/home/mjacquet/RIS/wd_genom/src/d435-genom3/config/settings_intel.json");
+    std::string preset_json((std::istreambuf_iterator<char>(config)), std::istreambuf_iterator<char>());
     advanced.load_json(preset_json);
 
     // Get intrinsics
@@ -139,8 +136,6 @@ d435_connect_start(d435_ids *ids, const d435_intrinsics *intrinsics,
     // Initialize sequence for frame
     ids->frame.height = h;
     ids->frame.width = w;
-
-    // ids->frame.pixels._maximum = h*w*3;
     if (genom_sequence_reserve(&(ids->frame.pixels), h*w*3)  == -1) {
         d435_e_mem_detail d;
         snprintf(d.what, sizeof(d.what), "unable to allocate rgb frame memory");

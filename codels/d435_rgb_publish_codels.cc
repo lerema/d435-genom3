@@ -26,7 +26,6 @@
 #include "d435_c_types.h"
 
 #include "codels.hpp"
-#include "iostream"
 
 /* --- Task rgb_publish ------------------------------------------------- */
 
@@ -83,20 +82,4 @@ d435_rgb_pub(const d435_RSdata_s *data, d435_frame_s *frame,
     rgb_out->write(self);
 
     return d435_pause_pub;
-}
-
-
-
-/* --- Activity set_fps ------------------------------------------------- */
-
-/** Codel d435_set_frequency of activity set_fps.
- *
- * Triggered by d435_start.
- * Yields to d435_ether.
- */
-genom_event
-d435_set_frequency(uint16_t fps, const genom_context self)
-{
-    // TODO
-    return d435_ether;
 }

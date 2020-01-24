@@ -21,10 +21,13 @@
  *
  *                                              Martin Jacquet - November 2019
  */
-#ifndef H_REALSENSE_CODELS
-#define H_REALSENSE_CODELS
+#ifndef H_D435_CODELS
+#define H_D435_CODELS
 
 #include "d435_c_types.h"
+
+#include "fstream"
+#include "iostream"
 
 #include "librealsense2/rs.hpp"
 #include "librealsense2/rs_advanced_mode.hpp"
@@ -45,4 +48,4 @@ struct d435_RSdata_s{
     };
 };
 
-#endif /* H_REALSENSE_CODELS */
+#endif /* H_D435_CODELS */

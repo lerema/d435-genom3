@@ -159,7 +159,7 @@ a|.Inputs
 a|.Context
 [disc]
   * In task `<<rgb_publish>>`
-  (frequency 100.0 _Hz_)
+  (frequency 62.5 _Hz_)
 |===
 
 '''
@@ -216,7 +216,7 @@ a|.Context
 |===
 a|.Context
 [disc]
-  * Frequency 100.0 _Hz_
+  * Frequency 62.5 _Hz_
 * Updates port `<<rgb_out>>`
 |===
 
