@@ -106,10 +106,10 @@ component d435 {
 
     /* ---- Activities ---- */
 
-    activity connect () {
+    activity connect() {
         task hw_comm;
 
-        codel<start> d435_connect_start(out ::ids, out intrinsics)
+        codel<start> d435_connect(out ::ids, out intrinsics)
             yield ether;
     };
 

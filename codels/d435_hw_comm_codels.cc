@@ -89,16 +89,22 @@ d435_comm_read(const d435_pipe_s *pipe, d435_RSdata_s **data,
 
 /* --- Activity connect ------------------------------------------------- */
 
-/** Codel d435_connect_start of activity connect.
+/** Codel d435_connect of activity connect.
  *
  * Triggered by d435_start.
  * Yields to d435_ether.
  */
 genom_event
-d435_connect_start(d435_ids *ids, const d435_intrinsics *intrinsics,
-                   const genom_context self)
+d435_connect(d435_ids *ids, const d435_intrinsics *intrinsics,
+             const genom_context self)
 {
     std::cout << "d435: initializing connection to hardware... ";
+
+    // Test if device already connected
+    if (ids->pipe->init) {
+        std::cout << "error" << std::endl << "tiscam: device already connected" << std::endl;
+        return d435_ether;
+    }
 
     // Start streaming
     rs2::pipeline_profile pipe_profile = ids->pipe->pipe.start();

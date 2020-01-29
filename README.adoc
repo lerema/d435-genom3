@@ -145,8 +145,8 @@ a|.Data structure
 
 == Services
 
-[[set_fps]]
-=== set_fps (activity)
+[[connect]]
+=== connect (activity)
 
 [role="small", width="50%", float="right", cols="1"]
 |===
@@ -158,14 +158,14 @@ a|.Inputs
 
 a|.Context
 [disc]
-  * In task `<<rgb_publish>>`
-  (frequency 62.5 _Hz_)
+  * In task `<<hw_comm>>`
+  * Updates port `<<intrinsics>>`
 |===
 
 '''
 
-[[connect]]
-=== connect (activity)
+[[disconnect]]
+=== disconnect (activity)
 
 [role="small", width="50%", float="right", cols="1"]
 |===
