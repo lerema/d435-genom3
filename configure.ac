@@ -74,5 +74,5 @@ AG_OUTPUT_TEMPLATES
 # libdependency.so are present.
 AC_CHECK_HEADER([librealsense2/rs.hpp], [librealsense2/rs_advanced_mode.hpp],,[
   AC_MSG_ERROR([Could not find realsense file.])])
-AC_CHECK_LIB([realsense2],,[
+AC_CHECK_LIB([realsense2],*,[
   AC_MSG_ERROR([Could not find realsense2 library.])])
