@@ -36,6 +36,7 @@ component d435 {
     email		"martin.jacquet@laas.fr";
     lang		"c";
     require	    "genom3 >= 2.99.26";
+    codels-require	"realsense2";
 
     /* ---- Exceptions ---- */
 
