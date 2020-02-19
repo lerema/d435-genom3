@@ -46,6 +46,7 @@ PKG_CHECK_MODULES(requires, [
 ])
 PKG_CHECK_MODULES(codels_requires, [
   realsense2
+  opencv
 ])
 
 AC_PATH_PROG(GENOM3, [genom3], [no])

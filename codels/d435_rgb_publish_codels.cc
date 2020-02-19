@@ -26,6 +26,15 @@
 #include "d435_c_types.h"
 
 #include "codels.hpp"
+#include "opencv2/opencv.hpp"
+
+using namespace cv;
+
+/* --- Global variables ------------------------------------------------- */
+bool display = false;
+bool record = false;
+VideoWriter recorder_rgb;
+VideoWriter recorder_ir;
 
 /* --- Task rgb_publish ------------------------------------------------- */
 
@@ -49,31 +58,134 @@ d435_rgb_start(bool started, const genom_context self)
 /** Codel d435_rgb_pub of task rgb_publish.
  *
  * Triggered by d435_pub.
- * Yields to d435_pause_pub.
+ * Yields to d435_visu.
  */
 genom_event
-d435_rgb_pub(const d435_RSdata_s *data, d435_frame_s *frame,
-             const d435_rgb_out *rgb_out, const genom_context self)
+d435_rgb_pub(const d435_RSdata_s *data, d435_frame_s *rgb,
+             d435_frame_s *ir, const d435_rgb_out *rgb_out,
+             const genom_context self)
 {
-    rs2::video_frame video_data = data->rgb;
-    const uint16_t w = video_data.get_width();
-    const uint16_t h = video_data.get_height();
+    const uint16_t w = ((rs2::video_frame) data->rgb).get_width();
+    const uint16_t h = ((rs2::video_frame) data->rgb).get_height();
 
-    if (w*h*3 <= frame->pixels._length)
+    if (w*h*3 <= rgb->pixels._length)
     {
-        frame->pixels._buffer = (uint8_t*) video_data.get_data();
+        rgb->pixels._buffer = (uint8_t*) data->rgb.get_data();
+        ir->pixels._buffer = (uint8_t*) data->ir.get_data();
 
         // Create timestamp
         uint32_t ms = data->rgb.get_timestamp();
         uint32_t s = floor(ms/1000);
         uint64_t ns = (ms - s*1000) * 1e6;
-        frame->ts.sec = s;
-        frame->ts.nsec = ns;
+        rgb->ts.sec = s;
+        rgb->ts.nsec = ns;
     }
 
     // Update port data
-    *(rgb_out->data(self)) = *frame;
+    *(rgb_out->data(self)) = *rgb;
     rgb_out->write(self);
 
+    return d435_visu;
+}
+
+
+/** Codel d435_rgb_visu of task rgb_publish.
+ *
+ * Triggered by d435_visu.
+ * Yields to d435_pause_pub.
+ */
+genom_event
+d435_rgb_visu(const d435_frame_s *rgb, const d435_frame_s *ir,
+              const genom_context self)
+{
+    Mat cvRGB(Size(rgb->width, rgb->height), CV_8UC3, (void*)rgb->pixels._buffer, Mat::AUTO_STEP);
+    Mat cvBGR;
+    cvtColor(cvRGB, cvBGR, COLOR_RGB2BGR);  // realsense data is RGB
+    Mat cvIR(Size(ir->width, ir->height), CV_8UC1, (void*)ir->pixels._buffer, Mat::AUTO_STEP);
+    equalizeHist(cvIR, cvIR);
+    applyColorMap(cvIR, cvIR, COLORMAP_JET);
+
+    if (display)
+    {
+        imshow("D435 RGB", cvRGB);
+        imshow("D435 IR", cvIR);
+        waitKey(1);
+    }
+    if (record)
+    {
+        recorder_rgb.write(cvRGB);
+        recorder_ir.write(cvIR);
+    }
+
     return d435_pause_pub;
+}
+
+
+/* --- Activity display ------------------------------------------------- */
+
+/** Codel d435_disp_start of activity display.
+ *
+ * Triggered by d435_start.
+ * Yields to d435_ether.
+ */
+genom_event
+d435_disp_start(const genom_context self)
+{
+    display = true;
+    return d435_ether;
+}
+
+
+/* --- Activity stop_display -------------------------------------------- */
+
+/** Codel d435_disp_stop of activity stop_display.
+ *
+ * Triggered by d435_start.
+ * Yields to d435_ether.
+ */
+genom_event
+d435_disp_stop(const genom_context self)
+{
+    display = false;
+    destroyAllWindows();
+    return d435_ether;
+}
+
+
+/* --- Activity record -------------------------------------------------- */
+
+/** Codel d435_rec_start of activity record.
+ *
+ * Triggered by d435_start.
+ * Yields to d435_ether.
+ */
+genom_event
+d435_rec_start(const char path[64], const d435_frame_s *rgb,
+               const d435_frame_s *ir, const genom_context self)
+{
+    char path_rgb[64];
+    snprintf(path_rgb, sizeof(path_rgb), "%s/rgb.avi", path);
+    recorder_rgb = VideoWriter(path_rgb,CV_FOURCC('M','J','P','G'), 60, Size(rgb->width,rgb->height));
+    char path_ir[64];
+    snprintf(path_ir, sizeof(path_ir), "%s/ir.avi", path);
+    recorder_ir = VideoWriter(path_ir,CV_FOURCC('M','J','P','G'), 60, Size(ir->width,ir->height));
+    record = true;
+    return d435_ether;
+}
+
+
+/* --- Activity stop_record --------------------------------------------- */
+
+/** Codel d435_rec_stop of activity stop_record.
+ *
+ * Triggered by d435_start.
+ * Yields to d435_ether.
+ */
+genom_event
+d435_rec_stop(const genom_context self)
+{
+    recorder_rgb.release();
+    recorder_ir.release();
+    record = false;
+    return d435_ether;
 }

@@ -39,12 +39,14 @@ struct d435_pipe_s{
 };
 
 struct d435_RSdata_s{
-    rs2::frame          depth;
     rs2::frame          rgb;
+    rs2::frame          ir;
+    rs2::frame          pc;
 
     d435_RSdata_s(rs2::frameset data) {
         rgb = data.get_color_frame();
-        depth = data.get_depth_frame();
+        ir = data.get_infrared_frame();
+        pc = data.get_depth_frame();
     };
 };
 

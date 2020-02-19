@@ -35,7 +35,7 @@ component d435 {
     email		"martin.jacquet@laas.fr";
     lang		"c";
     require	    "genom3 >= 2.99.26";
-    codels-require	"realsense2";
+    codels-require	"realsense2", "opencv";
 
     /* ---- Exceptions ---------------------------------------------------- */
 
@@ -54,7 +54,8 @@ component d435 {
         d435::RSdata_s      data;
         boolean             started;
 
-        d435::frame_s       frame;
+        d435::frame_s       rgb;
+        d435::frame_s       ir;
         d435::pc_s          pc;
 
         // sequence<portinfo_s>    ports;
@@ -71,7 +72,7 @@ component d435 {
     /* ---- Tasks --------------------------------------------------------- */
 
     const unsigned short rgb_pub_period_ms = 16;
-    const unsigned short depth_pub_period_ms = 100;
+    const unsigned short depth_pub_period_ms = 50;
 
     task hw_comm {
         codel<start> d435_comm_start(out ::ids, out extrinsics)
@@ -90,7 +91,10 @@ component d435 {
         codel<start> d435_rgb_start(in started)
             yield pause::start, pub;
 
-        codel<pub> d435_rgb_pub(in data, inout frame, out rgb_out)
+        codel<pub> d435_rgb_pub(in data, inout rgb, inout ir, out rgb_out)
+            yield visu;
+
+        codel<visu> d435_rgb_visu(in rgb, in ir)
             yield pause::pub;
     };
 
@@ -110,6 +114,36 @@ component d435 {
         task hw_comm;
 
         codel<start> d435_connect(out ::ids, out intrinsics)
+            yield ether;
+    };
+
+    /* ---- Display/Record ------------------------------------------------ */
+
+    activity display() {
+        task rgb_publish;
+
+        codel<start> d435_disp_start()
+            yield ether;
+    };
+
+    activity stop_display() {
+        task rgb_publish;
+
+        codel<start> d435_disp_stop()
+            yield ether;
+    };
+
+    activity record(in string<64> path = "/tmp/": "Video files path") {
+        task rgb_publish;
+
+        codel<start> d435_rec_start(in path, in rgb, in ir)
+            yield ether;
+    };
+
+    activity stop_record() {
+        task rgb_publish;
+
+        codel<start> d435_rec_stop()
             yield ether;
     };
 

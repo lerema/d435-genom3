@@ -57,13 +57,8 @@ genom_event
 d435_depth_pub(const d435_RSdata_s *data, d435_pc_s *pc,
                const d435_pc_out *pc_out, const genom_context self)
 {
-    // Read from data struct
-    // const uint32_t ms = data->depth.get_timestamp();
-    // const uin8_t *rgb_data = data->rgb.get_data();
-    // const uint16_t w = data->rgb.get_width();
-
     rs2::pointcloud rs_pc;
-    rs2::points points = rs_pc.calculate(data->depth);
+    rs2::points points = rs_pc.calculate(data->pc);
     // Tell pointcloud object to map to this color frame
     // rs_pc.map_to(data->rgb);
 
@@ -74,16 +69,11 @@ d435_depth_pub(const d435_RSdata_s *data, d435_pc_s *pc,
     }
 
     // Create timestamp
-    // If using time of publishing
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    pc->ts.sec = tv.tv_sec;
-    pc->ts.nsec = tv.tv_usec * 1000;
-    // Else if using time of capture
-    // uint32_t s = floor(ms/1000);
-    // uint64_t ns = (ms - s*1000) * 1e6;
-    // pc->ts.sec = s;
-    // pc->ts.nsec = ns;
+    uint32_t ms = data->rgb.get_timestamp();
+    uint32_t s = floor(ms/1000);
+    uint64_t ns = (ms - s*1000) * 1e6;
+    pc->ts.sec = s;
+    pc->ts.nsec = ns;
 
     // Allocate memory for pc sequences
     if (genom_sequence_reserve(&(pc->points), points.size())  == -1) {
@@ -102,7 +92,7 @@ d435_depth_pub(const d435_RSdata_s *data, d435_pc_s *pc,
     const rs2::vertex *vertices = points.get_vertices();
     // const rs2::texture_coordinate *tex_coords = points.get_texture_coordinates();
     uint32_t valid_points = 0;
-    uint8_t max_depth = 3;
+    uint8_t max_depth = 5;
     for (uint32_t i = 0; i < points.size(); i++)
     {
         if (vertices[i].z > 0.01 && std::abs(vertices[i].x) < max_depth && std::abs(vertices[i].y) < max_depth && vertices[i].z < max_depth)

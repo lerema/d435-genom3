@@ -75,10 +75,11 @@ genom_event
 d435_comm_read(const d435_pipe_s *pipe, d435_RSdata_s **data,
                bool *started, const genom_context self)
 {
-    // Read RGB
+    // Read
     (*data)->rgb = pipe->data.get_color_frame();
-    // Read RGBD
-    (*data)->depth = pipe->data.get_depth_frame();
+    (*data)->ir = pipe->data.get_infrared_frame();
+    (*data)->pc = pipe->data.get_depth_frame();
+
     // Update booleans
     *started = true;
 
@@ -107,7 +108,9 @@ d435_connect(d435_ids *ids, const d435_intrinsics *intrinsics,
     }
 
     // Start streaming
-    rs2::pipeline_profile pipe_profile = ids->pipe->pipe.start();
+    rs2::config cfg;
+    cfg.enable_all_streams();
+    rs2::pipeline_profile pipe_profile = ids->pipe->pipe.start(cfg);
 
     // Set configuration as written in the .json calibration file
     rs2::device dev = pipe_profile.get_device();
@@ -118,8 +121,6 @@ d435_connect(d435_ids *ids, const d435_intrinsics *intrinsics,
 
     // Get intrinsics
     rs2::video_stream_profile stream = pipe_profile.get_stream(RS2_STREAM_COLOR).as<rs2::video_stream_profile>();
-    const uint h = stream.height();
-    const uint w = stream.width();
 
     rs2_intrinsics intrinsics_rs2 = stream.get_intrinsics();
     float k[5] = { intrinsics_rs2.fx,
@@ -129,7 +130,6 @@ d435_connect(d435_ids *ids, const d435_intrinsics *intrinsics,
                    0 };
     float* d = intrinsics_rs2.coeffs;
 
-    // Initialize intrinsics and publish
     intrinsics->data(self)->calib._length = 5;
     intrinsics->data(self)->disto._length = 5;
     for (int i=0; i<5; i++)
@@ -139,15 +139,28 @@ d435_connect(d435_ids *ids, const d435_intrinsics *intrinsics,
     }
     intrinsics->write(self);
 
-    // Initialize sequence for frame
-    ids->frame.height = h;
-    ids->frame.width = w;
-    if (genom_sequence_reserve(&(ids->frame.pixels), h*w*3)  == -1) {
+    // Initialize sequence for color frame
+    ids->rgb.height = stream.height();
+    ids->rgb.width = stream.width();
+    ids->rgb.bpp = 3;
+    ids->rgb.pixels._length = ids->rgb.height*ids->rgb.width*ids->rgb.bpp;
+    if (genom_sequence_reserve(&(ids->rgb.pixels), ids->rgb.pixels._length)  == -1) {
         d435_e_mem_detail d;
         snprintf(d.what, sizeof(d.what), "unable to allocate rgb frame memory");
         return d435_e_mem(&d,self);
     }
-    ids->frame.pixels._length = h*w*3;
+
+    // Initialize sequence for ir frame
+    rs2::video_stream_profile streamIR = pipe_profile.get_stream(RS2_STREAM_INFRARED).as<rs2::video_stream_profile>();
+    ids->ir.height = streamIR.height();
+    ids->ir.width = streamIR.width();
+    ids->ir.bpp = 1;
+    ids->ir.pixels._length = ids->ir.height*ids->ir.width*ids->ir.bpp;
+    if (genom_sequence_reserve(&(ids->ir.pixels), ids->ir.pixels._length)  == -1) {
+        d435_e_mem_detail d;
+        snprintf(d.what, sizeof(d.what), "unable to allocate ir frame memory");
+        return d435_e_mem(&d,self);
+    }
 
     // Initialize sequence for point cloud
     ids->pc.isRegistered = false;

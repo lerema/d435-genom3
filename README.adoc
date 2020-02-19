@@ -165,15 +165,58 @@ a|.Context
 
 '''
 
-[[disconnect]]
-=== disconnect (activity)
+[[display]]
+=== display (activity)
 
 [role="small", width="50%", float="right", cols="1"]
 |===
 a|.Context
 [disc]
-  * In task `<<hw_comm>>`
-  * Updates port `<<intrinsics>>`
+  * In task `<<rgb_publish>>`
+  (frequency 62.5 _Hz_)
+|===
+
+'''
+
+[[stop_display]]
+=== stop_display (activity)
+
+[role="small", width="50%", float="right", cols="1"]
+|===
+a|.Context
+[disc]
+  * In task `<<rgb_publish>>`
+  (frequency 62.5 _Hz_)
+|===
+
+'''
+
+[[record]]
+=== record (activity)
+
+[role="small", width="50%", float="right", cols="1"]
+|===
+a|.Inputs
+[disc]
+ * `string<64>` `path` (default `"/tmp/"`) Video files path
+
+a|.Context
+[disc]
+  * In task `<<rgb_publish>>`
+  (frequency 62.5 _Hz_)
+|===
+
+'''
+
+[[stop_record]]
+=== stop_record (activity)
+
+[role="small", width="50%", float="right", cols="1"]
+|===
+a|.Context
+[disc]
+  * In task `<<rgb_publish>>`
+  (frequency 62.5 _Hz_)
 |===
 
 '''
@@ -230,7 +273,7 @@ a|.Context
 |===
 a|.Context
 [disc]
-  * Frequency 10.0 _Hz_
+  * Frequency 20.0 _Hz_
 * Updates port `<<pc_out>>`
 |===
 
