@@ -87,6 +87,7 @@ a|.Data structure
  *** `long` `nsec`
  ** `unsigned short` `height`
  ** `unsigned short` `width`
+ ** `unsigned short` `bpp`
  ** `sequence< octet >` `pixels`
 
 |===

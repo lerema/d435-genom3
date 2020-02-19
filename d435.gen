@@ -21,15 +21,14 @@
  *
  *                                              Martin Jacquet - November 2019
  */
-
-/* ---- Includes ---- */
+/* ---- Includes ---------------------------------------------------------- */
 
 #pragma require "openrobots2-idl >= 2.0"
 #pragma require "mbzirc-idl"
 
 #include "sensor/d435.idl"
 
-/* ---- Component declaration ---- */
+/* ---- Component declaration --------------------------------------------- */
 
 component d435 {
     version	    "0.1";
@@ -38,12 +37,12 @@ component d435 {
     require	    "genom3 >= 2.99.26";
     codels-require	"realsense2";
 
-    /* ---- Exceptions ---- */
+    /* ---- Exceptions ---------------------------------------------------- */
 
     exception e_rs { string<128> what; };
     exception e_mem { string<128> what; };
 
-    /* ---- IDS ---- */
+    /* ---- IDS ----------------------------------------------------------- */
 
     struct portinfo_s {
       string<128> name;
@@ -61,7 +60,7 @@ component d435 {
         // sequence<portinfo_s>    ports;
     };
 
-    /* ---- Ports ---- */
+    /* ---- Ports --------------------------------------------------------- */
 
     port            out d435::pc_s          pc_out;
     // port multiple   out d435::frame_s       rgb_out;
@@ -69,7 +68,7 @@ component d435 {
     port            out d435::intrinsics_s  intrinsics;
     port            out d435::extrinsics_s  extrinsics;
 
-    /* ---- Tasks ---- */
+    /* ---- Tasks --------------------------------------------------------- */
 
     const unsigned short rgb_pub_period_ms = 16;
     const unsigned short depth_pub_period_ms = 100;
@@ -105,7 +104,7 @@ component d435 {
             yield pause::pub;
     };
 
-    /* ---- Activities ---- */
+    /* ---- Hardware connection ------------------------------------------- */
 
     activity connect() {
         task hw_comm;
@@ -113,6 +112,8 @@ component d435 {
         codel<start> d435_connect(out ::ids, out intrinsics)
             yield ether;
     };
+
+    /* ---- Calibration --------------------------------------------------- */
 
     activity set_extrinsics(in sequence<double,6> ext_values) {
         task hw_comm;

@@ -61,15 +61,9 @@ d435_rgb_pub(const d435_RSdata_s *data, d435_frame_s *frame,
 
     if (w*h*3 <= frame->pixels._length)
     {
-        frame->pixels._buffer = (uint8_t*)video_data.get_data();
+        frame->pixels._buffer = (uint8_t*) video_data.get_data();
 
         // Create timestamp
-        // If using time of publishing
-        // struct timeval tv;
-        // gettimeofday(&tv, NULL);
-        // frame->ts.sec = tv.tv_sec;
-        // frame->ts.nsec = tv.tv_usec * 1000;
-        // Else if using time of capture
         uint32_t ms = data->rgb.get_timestamp();
         uint32_t s = floor(ms/1000);
         uint64_t ns = (ms - s*1000) * 1e6;

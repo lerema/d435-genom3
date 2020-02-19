@@ -189,8 +189,8 @@ d435_set_extrinsics(const sequence6_double *ext_values,
            ext_values->_buffer[2],
            ext_values->_buffer[3],
            ext_values->_buffer[4],
-           ext_values->_buffer[5]
-    };
+           ext_values->_buffer[5]};
+
     *extrinsics->data(self) = ext;
     extrinsics->write(self);
     std::cout << extrinsics->data(self)->tx << " " <<
