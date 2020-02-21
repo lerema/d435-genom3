@@ -87,9 +87,9 @@ d435_comm_read(const d435_pipe_s *pipe, d435_RSdata_s **data,
                bool *started, const genom_context self)
 {
     // Read
-        (*data)->rgb = pipe->data.get_color_frame();
-        (*data)->ir = pipe->data.get_infrared_frame();
-        (*data)->pc = pipe->data.get_depth_frame();
+    (*data)->rgb = pipe->data.get_color_frame();
+    (*data)->ir = pipe->data.get_infrared_frame();
+    (*data)->pc = pipe->data.get_depth_frame();
 
     // Update booleans
     *started = true;
