@@ -51,7 +51,7 @@ d435_depth_start(bool started, const genom_context self)
 /** Codel d435_depth_pub of task depth_publish.
  *
  * Triggered by d435_pub.
- * Yields to d435_pause_pub.
+ * Yields to d435_pause_start.
  */
 genom_event
 d435_depth_pub(const d435_RSdata_s *data, d435_pc_s *pc,
@@ -111,5 +111,5 @@ d435_depth_pub(const d435_RSdata_s *data, d435_pc_s *pc,
     *(pc_out->data(self)) = *pc;
     pc_out->write(self);
 
-    return d435_pause_pub;
+    return d435_pause_start;
 }

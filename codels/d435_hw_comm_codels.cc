@@ -34,6 +34,7 @@
  *
  * Triggered by d435_start.
  * Yields to d435_poll.
+ * Throws d435_e_rs.
  */
 genom_event
 d435_comm_start(d435_ids *ids, const d435_extrinsics *extrinsics,
@@ -51,6 +52,7 @@ d435_comm_start(d435_ids *ids, const d435_extrinsics *extrinsics,
  *
  * Triggered by d435_poll.
  * Yields to d435_pause_poll, d435_read.
+ * Throws d435_e_rs.
  */
 genom_event
 d435_comm_poll(d435_pipe_s **pipe, const genom_context self)
@@ -60,7 +62,15 @@ d435_comm_poll(d435_pipe_s **pipe, const genom_context self)
         return d435_pause_poll;
 
     // Wait for next set of frames from the camera
-    (*pipe)->data = (*pipe)->pipe.wait_for_frames();
+    try {
+        (*pipe)->data = (*pipe)->pipe.wait_for_frames();
+    }
+    catch (rs2::error e) {
+        d435_e_rs_detail d;
+        snprintf(d.what, sizeof(d.what), "%s", e.what());
+        printf("d435: %s\n", d.what);
+        return d435_e_rs(&d,self);
+    }
 
     return d435_read;
 }
@@ -70,15 +80,16 @@ d435_comm_poll(d435_pipe_s **pipe, const genom_context self)
  *
  * Triggered by d435_read.
  * Yields to d435_poll.
+ * Throws d435_e_rs.
  */
 genom_event
 d435_comm_read(const d435_pipe_s *pipe, d435_RSdata_s **data,
                bool *started, const genom_context self)
 {
     // Read
-    (*data)->rgb = pipe->data.get_color_frame();
-    (*data)->ir = pipe->data.get_infrared_frame();
-    (*data)->pc = pipe->data.get_depth_frame();
+        (*data)->rgb = pipe->data.get_color_frame();
+        (*data)->ir = pipe->data.get_infrared_frame();
+        (*data)->pc = pipe->data.get_depth_frame();
 
     // Update booleans
     *started = true;
@@ -94,91 +105,139 @@ d435_comm_read(const d435_pipe_s *pipe, d435_RSdata_s **data,
  *
  * Triggered by d435_start.
  * Yields to d435_ether.
+ * Throws d435_e_rs, d435_e_mem.
  */
 genom_event
 d435_connect(d435_ids *ids, const d435_intrinsics *intrinsics,
              const genom_context self)
 {
-    std::cout << "d435: initializing connection to hardware... ";
+    std::cout << "d435: initializing connection to hardware..." << std::endl;
 
     // Test if device already connected
     if (ids->pipe->init) {
-        std::cout << "error" << std::endl << "tiscam: device already connected" << std::endl;
+        std::cout << "error" << std::endl << "d435: device already connected" << std::endl;
         return d435_ether;
     }
 
-    // Start streaming
-    rs2::config cfg;
-    cfg.enable_all_streams();
-    rs2::pipeline_profile pipe_profile = ids->pipe->pipe.start(cfg);
+    if (!ids->data)
+        {
+        rs2::video_stream_profile* stream, * streamIR;
+        try
+        {
+            // Start streaming
+            rs2::config cfg;
+            cfg.enable_all_streams();
+            cfg.disable_stream(RS2_STREAM_ACCEL);
+            cfg.disable_stream(RS2_STREAM_GYRO);
+            cfg.disable_stream(RS2_STREAM_FISHEYE, 0);
+            cfg.disable_stream(RS2_STREAM_FISHEYE, 1);
+            cfg.disable_stream(RS2_STREAM_GPIO);
+            cfg.disable_stream(RS2_STREAM_POSE);
+            cfg.disable_stream(RS2_STREAM_CONFIDENCE);
 
-    // Set configuration as written in the .json calibration file
-    rs2::device dev = pipe_profile.get_device();
-    rs400::advanced_mode advanced = dev.as<rs400::advanced_mode>();
-    std::ifstream config("/home/mjacquet/RIS/wd_genom/src/d435-genom3/config/settings_intel.json");
-    std::string preset_json((std::istreambuf_iterator<char>(config)), std::istreambuf_iterator<char>());
-    advanced.load_json(preset_json);
+            rs2::pipeline_profile pipe_profile = ids->pipe->pipe.start(cfg);
 
-    // Get intrinsics
-    rs2::video_stream_profile stream = pipe_profile.get_stream(RS2_STREAM_COLOR).as<rs2::video_stream_profile>();
+            // Set configuration as written in the .json calibration file
+            rs2::device dev = pipe_profile.get_device();
+            rs400::advanced_mode advanced = dev.as<rs400::advanced_mode>();
+            std::ifstream config("/home/mjacquet/RIS/wd_genom/src/d435-genom3/config/settings_intel.json");
+            std::string preset_json((std::istreambuf_iterator<char>(config)), std::istreambuf_iterator<char>());
+            advanced.load_json(preset_json);
 
-    rs2_intrinsics intrinsics_rs2 = stream.get_intrinsics();
-    float k[5] = { intrinsics_rs2.fx,
-                   intrinsics_rs2.fy,
-                   intrinsics_rs2.ppx,
-                   intrinsics_rs2.ppy,
-                   0 };
-    float* d = intrinsics_rs2.coeffs;
+            // Get intrinsics
+            stream = new rs2::video_stream_profile(pipe_profile.get_stream(RS2_STREAM_COLOR).as<rs2::video_stream_profile>());
+            streamIR = new rs2::video_stream_profile(pipe_profile.get_stream(RS2_STREAM_INFRARED).as<rs2::video_stream_profile>());
+        }
+        catch (rs2::error e)
+        {
+            d435_e_rs_detail d;
+            snprintf(d.what, sizeof(d.what), "%s", e.what());
+            printf("d435: e_rs: %s\n", d.what);
+            return d435_e_rs(&d,self);
+        }
 
-    intrinsics->data(self)->calib._length = 5;
-    intrinsics->data(self)->disto._length = 5;
-    for (int i=0; i<5; i++)
+        rs2_intrinsics intrinsics_rs2 = stream->get_intrinsics();
+        float k[5] = { intrinsics_rs2.fx,
+                       intrinsics_rs2.fy,
+                       intrinsics_rs2.ppx,
+                       intrinsics_rs2.ppy,
+                       0 };
+        float* d = intrinsics_rs2.coeffs;
+
+        intrinsics->data(self)->calib._length = 5;
+        intrinsics->data(self)->disto._length = 5;
+        for (int i=0; i<5; i++) {
+            intrinsics->data(self)->calib._buffer[i] = k[i];
+            intrinsics->data(self)->disto._buffer[i] = d[i];
+        }
+        intrinsics->write(self);
+
+        // Initialize sequence for color frame
+        ids->rgb.height = stream->height();
+        ids->rgb.width = stream->width();
+        ids->rgb.bpp = 3;
+        ids->rgb.pixels._length = ids->rgb.height*ids->rgb.width*ids->rgb.bpp;
+        if (genom_sequence_reserve(&(ids->rgb.pixels), ids->rgb.pixels._length)  == -1) {
+            d435_e_mem_detail d;
+            snprintf(d.what, sizeof(d.what), "unable to allocate rgb frame memory");
+            printf("d435: %s\n", d.what);
+            return d435_e_mem(&d,self);
+        }
+
+        // Initialize sequence for ir frame
+        ids->ir.height = streamIR->height();
+        ids->ir.width = streamIR->width();
+        ids->ir.bpp = 1;
+        ids->ir.pixels._length = ids->ir.height*ids->ir.width*ids->ir.bpp;
+        if (genom_sequence_reserve(&(ids->ir.pixels), ids->ir.pixels._length)  == -1) {
+            d435_e_mem_detail d;
+            snprintf(d.what, sizeof(d.what), "unable to allocate ir frame memory");
+            printf("d435: %s\n", d.what);
+            return d435_e_mem(&d,self);
+        }
+
+        // Initialize sequence for point cloud
+        ids->pc.isRegistered = false;
+        if (genom_sequence_reserve(&(ids->pc.points), 0)  == -1 ||
+            genom_sequence_reserve(&(ids->pc.colors), 0)  == -1)
+        {
+            d435_e_mem_detail d;
+            snprintf(d.what, sizeof(d.what), "unable to allocate point cloud memory");
+            printf("d435: %s\n", d.what);
+            return d435_e_mem(&d,self);
+        }
+
+        // Init boolean
+        ids->pipe->init = true;
+
+        ids->data = new d435_RSdata_s(ids->pipe->data);
+    }
+    else
     {
-        intrinsics->data(self)->calib._buffer[i] = k[i];
-        intrinsics->data(self)->disto._buffer[i] = d[i];
-    }
-    intrinsics->write(self);
-
-    // Initialize sequence for color frame
-    ids->rgb.height = stream.height();
-    ids->rgb.width = stream.width();
-    ids->rgb.bpp = 3;
-    ids->rgb.pixels._length = ids->rgb.height*ids->rgb.width*ids->rgb.bpp;
-    if (genom_sequence_reserve(&(ids->rgb.pixels), ids->rgb.pixels._length)  == -1) {
-        d435_e_mem_detail d;
-        snprintf(d.what, sizeof(d.what), "unable to allocate rgb frame memory");
-        return d435_e_mem(&d,self);
+        ids->pipe->init = true;
+        ids->started = true;
     }
 
-    // Initialize sequence for ir frame
-    rs2::video_stream_profile streamIR = pipe_profile.get_stream(RS2_STREAM_INFRARED).as<rs2::video_stream_profile>();
-    ids->ir.height = streamIR.height();
-    ids->ir.width = streamIR.width();
-    ids->ir.bpp = 1;
-    ids->ir.pixels._length = ids->ir.height*ids->ir.width*ids->ir.bpp;
-    if (genom_sequence_reserve(&(ids->ir.pixels), ids->ir.pixels._length)  == -1) {
-        d435_e_mem_detail d;
-        snprintf(d.what, sizeof(d.what), "unable to allocate ir frame memory");
-        return d435_e_mem(&d,self);
-    }
+    std::cout << "d435: initialization done" << std::endl;
 
-    // Initialize sequence for point cloud
-    ids->pc.isRegistered = false;
-    if (genom_sequence_reserve(&(ids->pc.points), 0)  == -1 ||
-        genom_sequence_reserve(&(ids->pc.colors), 0)  == -1)
-    {
-        d435_e_mem_detail d;
-        snprintf(d.what, sizeof(d.what), "unable to allocate point cloud memory");
-        return d435_e_mem(&d,self);
-    }
+    return d435_ether;
+}
 
-    // Init boolean
-    ids->pipe->init = true;
 
-    ids->data = new d435_RSdata_s(ids->pipe->data);
+/* --- Activity disconnect ---------------------------------------------- */
 
-    std::cout << "done" << std::endl;
-
+/** Codel d435_disconnect of activity disconnect.
+ *
+ * Triggered by d435_start.
+ * Yields to d435_ether.
+ * Throws d435_e_rs.
+ */
+genom_event
+d435_disconnect(d435_pipe_s **pipe, bool *started,
+                const genom_context self)
+{
+    (*pipe)->init = false;
+    *started = false;
     return d435_ether;
 }
 
@@ -189,6 +248,7 @@ d435_connect(d435_ids *ids, const d435_intrinsics *intrinsics,
  *
  * Triggered by d435_start.
  * Yields to d435_ether.
+ * Throws d435_e_rs.
  */
 genom_event
 d435_set_extrinsics(const sequence6_double *ext_values,

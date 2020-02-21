@@ -151,16 +151,35 @@ a|.Data structure
 
 [role="small", width="50%", float="right", cols="1"]
 |===
-a|.Inputs
+a|.Throws
 [disc]
- * `string<64>` `serial` (default `"img_pub"`) Out port name
+ * `exception ::d435::e_rs`
+ ** `string<128>` `what`
 
- * `unsigned short` `fps` (default `"60"`) Publish frequency
+ * `exception ::d435::e_mem`
+ ** `string<128>` `what`
 
 a|.Context
 [disc]
   * In task `<<hw_comm>>`
   * Updates port `<<intrinsics>>`
+|===
+
+'''
+
+[[disconnect]]
+=== disconnect (activity)
+
+[role="small", width="50%", float="right", cols="1"]
+|===
+a|.Throws
+[disc]
+ * `exception ::d435::e_rs`
+ ** `string<128>` `what`
+
+a|.Context
+[disc]
+  * In task `<<hw_comm>>`
 |===
 
 '''
@@ -173,7 +192,7 @@ a|.Context
 a|.Context
 [disc]
   * In task `<<rgb_publish>>`
-  (frequency 62.5 _Hz_)
+  (frequency 29.41176470588235 _Hz_)
 |===
 
 '''
@@ -186,7 +205,7 @@ a|.Context
 a|.Context
 [disc]
   * In task `<<rgb_publish>>`
-  (frequency 62.5 _Hz_)
+  (frequency 29.41176470588235 _Hz_)
 |===
 
 '''
@@ -203,7 +222,7 @@ a|.Inputs
 a|.Context
 [disc]
   * In task `<<rgb_publish>>`
-  (frequency 62.5 _Hz_)
+  (frequency 29.41176470588235 _Hz_)
 |===
 
 '''
@@ -216,7 +235,7 @@ a|.Context
 a|.Context
 [disc]
   * In task `<<rgb_publish>>`
-  (frequency 62.5 _Hz_)
+  (frequency 29.41176470588235 _Hz_)
 |===
 
 '''
@@ -229,6 +248,11 @@ a|.Context
 a|.Inputs
 [disc]
  * `sequence< double, 6 >` `ext_values`
+
+a|.Throws
+[disc]
+ * `exception ::d435::e_rs`
+ ** `string<128>` `what`
 
 a|.Context
 [disc]
@@ -249,6 +273,11 @@ a|.Context
 [disc]
   * Free running
 * Updates port `<<extrinsics>>`
+a|.Throws
+[disc]
+ * `exception ::d435::e_rs`
+ ** `string<128>` `what`
+
 |===
 
 '''
@@ -260,7 +289,7 @@ a|.Context
 |===
 a|.Context
 [disc]
-  * Frequency 62.5 _Hz_
+  * Frequency 29.41176470588235 _Hz_
 * Updates port `<<rgb_out>>`
 |===
 
@@ -273,7 +302,7 @@ a|.Context
 |===
 a|.Context
 [disc]
-  * Frequency 20.0 _Hz_
+  * Frequency 29.41176470588235 _Hz_
 * Updates port `<<pc_out>>`
 |===
 

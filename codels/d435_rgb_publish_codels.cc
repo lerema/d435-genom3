@@ -92,7 +92,7 @@ d435_rgb_pub(const d435_RSdata_s *data, d435_frame_s *rgb,
 /** Codel d435_rgb_visu of task rgb_publish.
  *
  * Triggered by d435_visu.
- * Yields to d435_pause_pub.
+ * Yields to d435_pause_start.
  */
 genom_event
 d435_rgb_visu(const d435_frame_s *rgb, const d435_frame_s *ir,
@@ -107,17 +107,17 @@ d435_rgb_visu(const d435_frame_s *rgb, const d435_frame_s *ir,
 
     if (display)
     {
-        imshow("D435 RGB", cvRGB);
+        imshow("D435 RGB", cvBGR);
         imshow("D435 IR", cvIR);
         waitKey(1);
     }
     if (record)
     {
-        recorder_rgb.write(cvRGB);
+        recorder_rgb.write(cvBGR);
         recorder_ir.write(cvIR);
     }
 
-    return d435_pause_pub;
+    return d435_pause_start;
 }
 
 
