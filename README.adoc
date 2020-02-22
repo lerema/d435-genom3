@@ -159,6 +159,9 @@ a|.Throws
  * `exception ::d435::e_mem`
  ** `string<128>` `what`
 
+ * `exception ::d435::e_d435`
+ ** `string<128>` `what`
+
 a|.Context
 [disc]
   * In task `<<hw_comm>>`

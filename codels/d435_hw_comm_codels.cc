@@ -105,7 +105,7 @@ d435_comm_read(const d435_pipe_s *pipe, d435_RSdata_s **data,
  *
  * Triggered by d435_start.
  * Yields to d435_ether.
- * Throws d435_e_rs, d435_e_mem.
+ * Throws d435_e_rs, d435_e_mem, d435_e_d435.
  */
 genom_event
 d435_connect(d435_ids *ids, const d435_intrinsics *intrinsics,
@@ -115,8 +115,10 @@ d435_connect(d435_ids *ids, const d435_intrinsics *intrinsics,
 
     // Test if device already connected
     if (ids->pipe->init) {
-        std::cout << "error" << std::endl << "d435: device already connected" << std::endl;
-        return d435_ether;
+        d435_e_d435_detail d;
+        snprintf(d.what, sizeof(d.what), "device already connected");
+        printf("d435: %s\n", d.what);
+        return d435_e_d435(&d,self);
     }
 
     if (!ids->data)
@@ -140,7 +142,21 @@ d435_connect(d435_ids *ids, const d435_intrinsics *intrinsics,
             // Set configuration as written in the .json calibration file
             rs2::device dev = pipe_profile.get_device();
             rs400::advanced_mode advanced = dev.as<rs400::advanced_mode>();
-            std::ifstream config("/home/mjacquet/RIS/wd_genom/src/d435-genom3/config/settings_intel.json");
+
+            // Load config file
+            const char* config_path = std::getenv("GENOM_DEVEL");
+            char config_file[128];
+            strcpy(config_file, config_path); // copy string one into the result.
+            strcat(config_file, "/etc/d435.json");
+            std::ifstream config(config_file);
+            if (config.is_open())
+                printf("d435: configuration loaded\n");
+            else {
+                d435_e_d435_detail d;
+                snprintf(d.what, sizeof(d.what), "configuration file not found");
+                printf("d435: %s\nd435: is d435 installed in $GENOM_DEVEL? check $GENOM_DEVEL/etc folder\n", d.what);
+                return d435_e_d435(&d,self);
+            }
             std::string preset_json((std::istreambuf_iterator<char>(config)), std::istreambuf_iterator<char>());
             advanced.load_json(preset_json);
 
@@ -152,7 +168,7 @@ d435_connect(d435_ids *ids, const d435_intrinsics *intrinsics,
         {
             d435_e_rs_detail d;
             snprintf(d.what, sizeof(d.what), "%s", e.what());
-            printf("d435: e_rs: %s\n", d.what);
+            printf("d435: %s\n", d.what);
             return d435_e_rs(&d,self);
         }
 

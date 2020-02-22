@@ -40,6 +40,7 @@ component d435 {
     /* ---- Exceptions ---------------------------------------------------- */
 
     exception e_rs { string<128> what; };
+    exception e_d435 { string<128> what; };
     exception e_mem { string<128> what; };
 
     /* ---- IDS ----------------------------------------------------------- */
@@ -114,7 +115,7 @@ component d435 {
 
     activity connect() {
         task hw_comm;
-        throw e_mem, e_rs;
+        throw e_mem, e_rs, e_d435;
 
         codel<start> d435_connect(out ::ids, out intrinsics)
             yield ether;
