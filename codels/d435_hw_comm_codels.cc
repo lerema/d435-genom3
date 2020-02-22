@@ -120,7 +120,6 @@ d435_connect(d435_ids *ids, const d435_intrinsics *intrinsics,
         printf("d435: %s\n", d.what);
         return d435_e_d435(&d,self);
     }
-
     if (!ids->data)
         {
         rs2::video_stream_profile* stream, * streamIR;
@@ -136,7 +135,6 @@ d435_connect(d435_ids *ids, const d435_intrinsics *intrinsics,
             cfg.disable_stream(RS2_STREAM_GPIO);
             cfg.disable_stream(RS2_STREAM_POSE);
             cfg.disable_stream(RS2_STREAM_CONFIDENCE);
-
             rs2::pipeline_profile pipe_profile = ids->pipe->pipe.start(cfg);
 
             // Set configuration as written in the .json calibration file
@@ -145,6 +143,12 @@ d435_connect(d435_ids *ids, const d435_intrinsics *intrinsics,
 
             // Load config file
             const char* config_path = std::getenv("GENOM_DEVEL");
+            if (config_path == NULL) {
+                d435_e_d435_detail d;
+                snprintf(d.what, sizeof(d.what), "$GENOM_DEVEL env variable not found");
+                printf("d435: %s ; it is required for loading the configuration file\n", d.what);
+                return d435_e_d435(&d,self);
+            }
             char config_file[128];
             strcpy(config_file, config_path); // copy string one into the result.
             strcat(config_file, "/etc/d435.json");
