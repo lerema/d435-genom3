@@ -195,7 +195,7 @@ a|.Context
 a|.Context
 [disc]
   * In task `<<rgb_publish>>`
-  (frequency 20.0 _Hz_)
+  (frequency 58.8235294117647 _Hz_)
 |===
 
 '''
@@ -208,7 +208,7 @@ a|.Context
 a|.Context
 [disc]
   * In task `<<rgb_publish>>`
-  (frequency 20.0 _Hz_)
+  (frequency 58.8235294117647 _Hz_)
 |===
 
 '''
@@ -225,7 +225,7 @@ a|.Inputs
 a|.Context
 [disc]
   * In task `<<rgb_publish>>`
-  (frequency 20.0 _Hz_)
+  (frequency 58.8235294117647 _Hz_)
 |===
 
 '''
@@ -238,7 +238,7 @@ a|.Context
 a|.Context
 [disc]
   * In task `<<rgb_publish>>`
-  (frequency 20.0 _Hz_)
+  (frequency 58.8235294117647 _Hz_)
 |===
 
 '''
@@ -292,7 +292,7 @@ a|.Throws
 |===
 a|.Context
 [disc]
-  * Frequency 20.0 _Hz_
+  * Frequency 58.8235294117647 _Hz_
 * Updates port `<<rgb_out>>`
 |===
 
@@ -305,7 +305,7 @@ a|.Context
 |===
 a|.Context
 [disc]
-  * Frequency 20.0 _Hz_
+  * Frequency 14.925373134328357 _Hz_
 * Updates port `<<pc_out>>`
 |===
 

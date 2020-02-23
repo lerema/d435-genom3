@@ -72,8 +72,8 @@ component d435 {
 
     /* ---- Tasks --------------------------------------------------------- */
 
-    const unsigned short rgb_pub_period_ms = 50;
-    const unsigned short depth_pub_period_ms = 50;
+    const unsigned short rgb_pub_period_ms = 17;
+    const unsigned short depth_pub_period_ms = 67;
 
     task hw_comm {
         throw e_rs;

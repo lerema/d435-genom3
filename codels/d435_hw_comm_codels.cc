@@ -133,6 +133,8 @@ d435_connect(d435_ids *ids, const d435_intrinsics *intrinsics,
             cfg.enable_stream(RS2_STREAM_DEPTH, 1280, 720, RS2_FORMAT_Z16, 30);
             cfg.enable_stream(RS2_STREAM_INFRARED, 1, 1280, 720, RS2_FORMAT_Y8, 30);
             cfg.enable_stream(RS2_STREAM_INFRARED, 2, 1280, 720, RS2_FORMAT_Y8, 30);
+            cfg.disable_stream(RS2_STREAM_GYRO);
+            cfg.disable_stream(RS2_STREAM_ACCEL);
             rs2::pipeline_profile pipe_profile = ids->pipe->pipe.start(cfg);
 
             // Set configuration as written in the .json calibration file
