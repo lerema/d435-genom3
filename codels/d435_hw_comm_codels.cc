@@ -127,14 +127,12 @@ d435_connect(d435_ids *ids, const d435_intrinsics *intrinsics,
         {
             // Start streaming
             rs2::config cfg;
-            cfg.enable_all_streams();
-            cfg.disable_stream(RS2_STREAM_ACCEL);
-            cfg.disable_stream(RS2_STREAM_GYRO);
-            cfg.disable_stream(RS2_STREAM_FISHEYE, 0);
-            cfg.disable_stream(RS2_STREAM_FISHEYE, 1);
-            cfg.disable_stream(RS2_STREAM_GPIO);
-            cfg.disable_stream(RS2_STREAM_POSE);
-            cfg.disable_stream(RS2_STREAM_CONFIDENCE);
+
+            // cfg.enable_all_streams();
+            cfg.enable_stream(RS2_STREAM_COLOR, 960, 540, RS2_FORMAT_BGR8, 60);
+            cfg.enable_stream(RS2_STREAM_DEPTH, 1280, 720, RS2_FORMAT_Z16, 30);
+            cfg.enable_stream(RS2_STREAM_INFRARED, 1, 1280, 720, RS2_FORMAT_Y8, 30);
+            cfg.enable_stream(RS2_STREAM_INFRARED, 2, 1280, 720, RS2_FORMAT_Y8, 30);
             rs2::pipeline_profile pipe_profile = ids->pipe->pipe.start(cfg);
 
             // Set configuration as written in the .json calibration file
