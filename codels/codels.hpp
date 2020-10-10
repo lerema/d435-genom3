@@ -24,30 +24,16 @@
 #ifndef H_D435_CODELS
 #define H_D435_CODELS
 
+#include "acd435.h"
+
 #include "d435_c_types.h"
 
-#include "fstream"
-#include "iostream"
+#include <librealsense2/rs.hpp>
+using namespace rs2;
 
-#include "librealsense2/rs.hpp"
-#include "librealsense2/rs_advanced_mode.hpp"
-
-struct d435_pipe_s{
-    bool                init = false;
-    rs2::pipeline       pipe;
-    rs2::frameset       data;
-};
-
-struct d435_RSdata_s{
-    rs2::frame          rgb;
-    rs2::frame          ir;
-    rs2::frame          pc;
-
-    d435_RSdata_s(rs2::frameset data) {
-        rgb = data.get_color_frame();
-        ir = data.get_infrared_frame();
-        pc = data.get_depth_frame();
-    };
+struct or_camera_pipe {
+    pipeline       pipe;
+    frameset       data;
 };
 
 #endif /* H_D435_CODELS */

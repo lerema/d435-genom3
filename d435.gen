@@ -24,9 +24,11 @@
 /* ---- Includes ---------------------------------------------------------- */
 
 #pragma require "openrobots2-idl >= 2.0"
-#pragma require "mbzirc-idl"
+#pragma require "vision-idl"
 
-#include "sensor/d435.idl"
+// #include "or/pose/pose_estimator.gen"
+#include "or/sensor/camera.gen"
+#include "or/sensor/depth.idl"
 
 /* ---- Component declaration --------------------------------------------- */
 
@@ -35,133 +37,85 @@ component d435 {
     email		"martin.jacquet@laas.fr";
     lang		"c";
     require	    "genom3 >= 2.99.26";
-    codels-require	"realsense2", "opencv";
+    codels-require	"realsense2";
+
+    /* ---- Interfaces ---------------------------------------------------- */
+    provides or_camera;
 
     /* ---- Exceptions ---------------------------------------------------- */
-
     exception e_rs { string<128> what; };
-    exception e_d435 { string<128> what; };
+    exception e_io { string<128> what; };
     exception e_mem { string<128> what; };
 
-    /* ---- IDS ----------------------------------------------------------- */
-
-    struct portinfo_s {
-      string<128> name;
-      or::time::ts last;
-    };
-
-    ids {
-        d435::pipe_s        pipe;
-        d435::RSdata_s      data;
-        boolean             started;
-
-        d435::frame_s       rgb;
-        d435::frame_s       ir;
-        d435::pc_s          pc;
-
-        // sequence<portinfo_s>    ports;
-    };
-
     /* ---- Ports --------------------------------------------------------- */
+    // port out  or::sensor::pc    pc;
+    // port out  or::sensor::frame ir;
+    /* interfaces ports:
+     *  port out  or::sensor::frame         frame;
+     *  port out  or::sensor::intrinsics    intrinsics;
+     *  port out  or::sensor::extrinsics    extrinsics;
+     */
 
-    port            out d435::pc_s          pc_out;
-    // port multiple   out d435::frame_s       rgb_out;
-    port            out d435::frame_s       rgb_out;
-    port            out d435::intrinsics_s  intrinsics;
-    port            out d435::extrinsics_s  extrinsics;
+    /* ---- IDS ----------------------------------------------------------- */
+    ids {
+        or_camera::info info;
+        or_camera::pipe pipe;
+
+        // struct flag {
+        //     boolean rgb;
+        //     boolean ir;
+        //     boolean pc;
+        // };
+    };
 
     /* ---- Tasks --------------------------------------------------------- */
-
-    const unsigned short rgb_pub_period_ms = 17;
-    const unsigned short depth_pub_period_ms = 67;
-
-    task hw_comm {
+    task main {
         throw e_rs;
 
-        codel<start> d435_comm_start(out ::ids, out extrinsics)
+        codel<start> d435_main_start(out ::ids, out extrinsics)
             yield poll;
 
-        async codel<poll> d435_comm_poll(inout pipe)
-            yield pause::poll, read;
+        async codel<poll> d435_main_poll(in info.started, inout pipe)
+            yield pause::poll, pub;
 
-        codel<read> d435_comm_read(in pipe, out data, out started)
+        codel<pub> d435_main_pub(in pipe, out frame)
             yield poll;
-    };
-
-    task rgb_publish {
-        period rgb_pub_period_ms ms;
-
-        codel<start> d435_rgb_start(in started)
-            yield pause::start, pub;
-
-        codel<pub> d435_rgb_pub(in data, inout rgb, inout ir, out rgb_out)
-            yield visu;
-
-        codel<visu> d435_rgb_visu(in rgb, in ir)
-            yield pause::start;
-    };
-
-    task depth_publish {
-        period depth_pub_period_ms ms;
-
-        codel<start> d435_depth_start(in started)
-            yield pause::start, pub;
-
-        codel<pub> d435_depth_pub(in data, inout pc, out pc_out)
-            yield pause::start;
     };
 
     /* ---- Hardware connection ------------------------------------------- */
-
     activity connect() {
-        task hw_comm;
-        throw e_mem, e_rs, e_d435;
+        task main;
+        throw e_rs, e_io;
 
-        codel<start> d435_connect(out ::ids, out intrinsics)
+        codel<start> d435_connect(out pipe, in info, out info.started, out intrinsics)
             yield ether;
     };
 
     activity disconnect() {
-        task hw_comm;
+        task main;
+        throw e_rs;
 
-        codel<start> d435_disconnect(out pipe, out started)
+        codel<start> d435_disconnect(out pipe, out info.started)
             yield ether;
     };
 
-    /* ---- Display/Record ------------------------------------------------ */
-
-    activity display() {
-        task rgb_publish;
-
-        codel<start> d435_disp_start()
-            yield ether;
+    /* ---- Control setters ----------------------------------------------- */
+    attribute set_format(in info.format = "RGB8" : "Pixel format (RGB8, RGBA8, Y16)") {
+        throw e_io;
+        validate set_format(local in format);
     };
-
-    activity stop_display() {
-        task rgb_publish;
-
-        codel<start> d435_disp_stop()
-            yield ether;
+    attribute set_fps(in info.frequency = 30 : "Camera frequency (6, 15, 30, 60(up to 640x480))") {
+        throw e_io;
+        validate set_fps(local in frequency);
     };
-
-    activity record(in string<64> path = "/tmp/": "Video files path") {
-        task rgb_publish;
-
-        codel<start> d435_rec_start(in path, in rgb, in ir)
-            yield ether;
-    };
-
-    activity stop_record() {
-        task rgb_publish;
-
-        codel<start> d435_rec_stop()
-            yield ether;
+    attribute set_size(in info.size = {1280, 720} : "Video size (1920x1080, 1280x720, 960x540, 848x480, 640x480, 640x360, 424x240, 320x240)") {
+        throw e_io;
+        validate set_size(local in size);
     };
 
     /* ---- Calibration --------------------------------------------------- */
-
-    activity set_extrinsics(in sequence<double,6> ext_values) {
-        task hw_comm;
+    activity set_extrinsics(in sequence<float,6> ext_values) {
+        task main;
 
         codel<start> d435_set_extrinsics(in ext_values, out extrinsics)
             yield ether;

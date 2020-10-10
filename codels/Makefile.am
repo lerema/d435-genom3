@@ -21,24 +21,24 @@
 #
 #                                              Martin Jacquet - November 2019
 #
+
 lib_LTLIBRARIES = libd435_codels.la
 
-libd435_codels_la_SOURCES=	d435_c_types.h
-libd435_codels_la_SOURCES+=	d435_codels.cc
-libd435_codels_la_SOURCES+=	d435_hw_comm_codels.cc
-libd435_codels_la_SOURCES+=	d435_rgb_publish_codels.cc
-libd435_codels_la_SOURCES+=	d435_depth_publish_codels.cc
+libd435_codels_la_SOURCES  =	d435_c_types.h
+libd435_codels_la_SOURCES +=	d435_codels.cc
+libd435_codels_la_SOURCES +=	d435_main_codels.cc
 
-libd435_codels_la_CPPFLAGS=	$(requires_CFLAGS)
-libd435_codels_la_LDFLAGS=	$(requires_LIBS)
+libd435_codels_la_CPPFLAGS =	$(requires_CFLAGS)
+libd435_codels_la_LIBADD   =	$(requires_LIBS)
 libd435_codels_la_CPPFLAGS+=	$(codels_requires_CFLAGS)
-libd435_codels_la_LDFLAGS+=	$(codels_requires_LIBS)
-libd435_codels_la_LDFLAGS+=	-release $(PACKAGE_VERSION)
-libd435_codels_la_LDFLAGS+=	-lrealsense2
+libd435_codels_la_LIBADD  +=	$(codels_requires_LIBS)
+libd435_codels_la_LDFLAGS  =	-release $(PACKAGE_VERSION)
+
 
 # idl  mappings
 BUILT_SOURCES=	d435_c_types.h
 CLEANFILES=	${BUILT_SOURCES}
+
 d435_c_types.h: ${top_srcdir}/d435.gen
 	${GENOM3}  mappings \
 	  -MD -MF .deps/$@.d -MT $@ --signature -l c $< >$@

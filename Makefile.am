@@ -21,6 +21,7 @@
 #
 #                                              Martin Jacquet - November 2019
 #
+
 ACLOCAL_AMFLAGS=	-I autoconf
 
 # IDL source files

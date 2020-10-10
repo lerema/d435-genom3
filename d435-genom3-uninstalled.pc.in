@@ -1,3 +1,4 @@
+
 # pkg-config file for uninstalled d435 interface and codels library
 #
 prefix=@abs_top_builddir@
@@ -7,6 +8,6 @@ includedir=${prefix}/codels
 Name: d435-genom3
 Description: d435 interface and codels library
 Version: @PACKAGE_VERSION@
-Requires: openrobots2-idl >= 2.0, mbzirc-idl, genom3 >= 2.99.26
+Requires: openrobots2-idl >= 2.0, vision-idl, genom3 >= 2.99.26
 Libs: ${libdir}/libd435_codels.la
 Libs.private: @codels_requires_LIBS@
