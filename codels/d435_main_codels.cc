@@ -68,10 +68,10 @@ d435_main_poll(bool started, or_camera_pipe **pipe,
 
     // Wait for next set of frames from the camera
     try {
-        (*pipe)->data = (*pipe)->pipe.wait_for_frames();
+        (*pipe)->data = (*pipe)->pipe.wait_for_frames(15000);
     }
     catch (error e) {
-        warnx("error caught: %s\n", e.what());
+        warnx("%s\n", e.what());
         return d435_pause_poll;
     }
 
