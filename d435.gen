@@ -70,8 +70,6 @@ component d435 {
 
     /* ---- Tasks --------------------------------------------------------- */
     task main {
-        throw e_rs;
-
         codel<start> d435_main_start(out ::ids, out extrinsics)
             yield poll;
 

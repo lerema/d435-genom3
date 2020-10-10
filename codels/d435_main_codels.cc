@@ -38,7 +38,6 @@
  *
  * Triggered by d435_start.
  * Yields to d435_poll.
- * Throws d435_e_rs.
  */
 genom_event
 d435_main_start(d435_ids *ids, const d435_extrinsics *extrinsics,
@@ -58,7 +57,6 @@ d435_main_start(d435_ids *ids, const d435_extrinsics *extrinsics,
  *
  * Triggered by d435_poll.
  * Yields to d435_pause_poll, d435_pub.
- * Throws d435_e_rs.
  */
 genom_event
 d435_main_poll(bool started, or_camera_pipe **pipe,
@@ -72,11 +70,9 @@ d435_main_poll(bool started, or_camera_pipe **pipe,
     try {
         (*pipe)->data = (*pipe)->pipe.wait_for_frames();
     }
-    catch (rs2::error e) {
-        d435_e_rs_detail d;
-        snprintf(d.what, sizeof(d.what), "%s", e.what());
-        printf("d435: %s\n", d.what);
-        return d435_e_rs(&d,self);
+    catch (error e) {
+        warnx("error caught: %s\n", e.what());
+        return d435_pause_poll;
     }
 
     return d435_pub;
@@ -87,7 +83,6 @@ d435_main_poll(bool started, or_camera_pipe **pipe,
  *
  * Triggered by d435_pub.
  * Yields to d435_poll.
- * Throws d435_e_rs.
  */
 genom_event
 d435_main_pub(const or_camera_pipe *pipe, const d435_frame *frame,
@@ -161,9 +156,9 @@ d435_connect(or_camera_pipe **pipe, const or_camera_info *info,
             cfg.enable_stream(RS2_STREAM_COLOR, info->size.w, info->size.h, fmt, info->frequency);
 
             pipeline_profile pipe_profile = (*pipe)->pipe.start(cfg);
-            video_stream_profile stream = pipe_profile.get_stream(RS2_STREAM_COLOR).as<rs2::video_stream_profile>();
+            video_stream_profile stream = pipe_profile.get_stream(RS2_STREAM_COLOR).as<video_stream_profile>();
             intrinsics_rs2 = stream.get_intrinsics();
-        } catch (rs2::error& e) {
+        } catch (error& e) {
             d435_e_rs_detail d;
             snprintf(d.what, sizeof(d.what), "%s", e.what());
             warnx("rs error: %s", d.what);
@@ -213,7 +208,7 @@ d435_disconnect(or_camera_pipe **pipe, bool *started,
 {
     try {
         (*pipe)->pipe.stop();
-    } catch (rs2::error& e) {
+    } catch (error& e) {
         d435_e_rs_detail d;
         snprintf(d.what, sizeof(d.what), "%s", e.what());
         warnx("rs error: %s", d.what);

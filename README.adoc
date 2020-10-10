@@ -116,32 +116,6 @@ a|.Data structure
 
 '''
 
-[[pc]]
-=== pc (out)
-
-
-[role="small", width="50%", float="right", cols="1"]
-|===
-a|.Data structure
-[disc]
- * `struct ::or::sensor::pc` `pc`
- ** `struct ::or::time::ts` `ts`
- *** `long` `sec`
- *** `long` `nsec`
- ** `unsigned long` `length`
- ** `sequence< struct ::or::sensor::pos >` `points`
- *** `float` `x`
- *** `float` `y`
- *** `float` `z`
- ** `sequence< struct ::or::sensor::color >` `colors`
- *** `octet` `r`
- *** `octet` `g`
- *** `octet` `b`
-
-|===
-
-'''
-
 == Services
 
 [[connect]]
@@ -247,11 +221,6 @@ a|.Inputs
 [disc]
  * `sequence< float, 6 >` `ext_values`
 
-a|.Throws
-[disc]
- * `exception ::d435::e_rs`
- ** `string<128>` `what`
-
 a|.Context
 [disc]
   * In task `<<main>>`
@@ -272,11 +241,6 @@ a|.Context
   * Free running
 * Updates port `<<frame>>`
 * Updates port `<<extrinsics>>`
-a|.Throws
-[disc]
- * `exception ::d435::e_rs`
- ** `string<128>` `what`
-
 |===
 
 '''
