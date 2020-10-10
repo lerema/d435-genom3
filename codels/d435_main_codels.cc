@@ -70,7 +70,7 @@ d435_main_poll(bool started, or_camera_pipe **pipe,
     try {
         (*pipe)->data = (*pipe)->pipe.wait_for_frames(15000);
     }
-    catch (error e) {
+    catch (rs2::error e) {
         warnx("%s\n", e.what());
         return d435_pause_poll;
     }
@@ -158,7 +158,7 @@ d435_connect(or_camera_pipe **pipe, const or_camera_info *info,
             pipeline_profile pipe_profile = (*pipe)->pipe.start(cfg);
             video_stream_profile stream = pipe_profile.get_stream(RS2_STREAM_COLOR).as<video_stream_profile>();
             intrinsics_rs2 = stream.get_intrinsics();
-        } catch (error& e) {
+        } catch (rs2::error& e) {
             d435_e_rs_detail d;
             snprintf(d.what, sizeof(d.what), "%s", e.what());
             warnx("rs error: %s", d.what);
@@ -208,7 +208,7 @@ d435_disconnect(or_camera_pipe **pipe, bool *started,
 {
     try {
         (*pipe)->pipe.stop();
-    } catch (error& e) {
+    } catch (rs2::error& e) {
         d435_e_rs_detail d;
         snprintf(d.what, sizeof(d.what), "%s", e.what());
         warnx("rs error: %s", d.what);
