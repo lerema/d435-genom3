@@ -81,11 +81,11 @@ component d435 {
     };
 
     /* ---- Hardware connection ------------------------------------------- */
-    activity connect() {
+    activity connect(in string<12> serial = : "serial number of the desired D435") {
         task main;
         throw e_rs, e_io;
 
-        codel<start> d435_connect(out pipe, in info, out info.started, out intrinsics)
+        codel<start> d435_connect(in serial, out pipe, in info, out info.started, out intrinsics)
             yield ether;
     };
 

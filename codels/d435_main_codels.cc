@@ -130,8 +130,9 @@ d435_main_pub(const or_camera_pipe *pipe, const d435_frame *frame,
  * Throws d435_e_rs, d435_e_io.
  */
 genom_event
-d435_connect(or_camera_pipe **pipe, const or_camera_info *info,
-             bool *started, const d435_intrinsics *intrinsics,
+d435_connect(const char serial[12], or_camera_pipe **pipe,
+             const or_camera_info *info, bool *started,
+             const d435_intrinsics *intrinsics,
              const genom_context self)
 {
     if (*started)

@@ -123,6 +123,10 @@ a|.Data structure
 
 [role="small", width="50%", float="right", cols="1"]
 |===
+a|.Inputs
+[disc]
+ * `string<12>` `serial` serial number of the desired D435
+
 a|.Throws
 [disc]
  * `exception ::d435::e_rs`
