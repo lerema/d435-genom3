@@ -41,14 +41,24 @@
  */
 genom_event
 d435_main_start(d435_ids *ids, const d435_extrinsics *extrinsics,
-                const genom_context self)
+                const d435_frame *frame, const genom_context self)
 {
+    *extrinsics->data(self) = {0,0,0,0,0,0};
     extrinsics->write(self);
+
     ids->pipe = new or_camera_pipe();
     ids->info.started = false;
     ids->info.frequency = 30;
     snprintf(ids->info.format, sizeof(ids->info.format), "RGB8");
     ids->info.size = {1280, 720};
+    ids->info.compression_rate = -1;
+
+    frame->open("raw", self);
+    frame->open("compressed", self);
+
+    genom_sequence_reserve(&(frame->data("raw", self)->pixels), 0);
+    genom_sequence_reserve(&(frame->data("compressed", self)->pixels), 0);
+
     return d435_poll;
 }
 
@@ -85,37 +95,88 @@ d435_main_poll(bool started, or_camera_pipe **pipe,
  * Yields to d435_poll.
  */
 genom_event
-d435_main_pub(const or_camera_pipe *pipe, const d435_frame *frame,
-              const genom_context self)
+d435_main_pub(int16_t compression_rate, const or_camera_pipe *pipe,
+              const d435_frame *frame, const genom_context self)
 {
-    or_sensor_frame* fdata = frame->data(self);
+    or_sensor_frame* rfdata = frame->data("raw", self);
+    or_sensor_frame* cfdata = frame->data("compressed", self);
 
     video_frame rsframe = pipe->data.get_color_frame();
     const uint16_t w = rsframe.get_width();
     const uint16_t h = rsframe.get_height();
     const uint16_t c = rsframe.get_bytes_per_pixel();
+    const double ms = rsframe.get_timestamp();
 
-    if (h*w*c != fdata->pixels._maximum)
+    if (h*w*c != rfdata->pixels._maximum)
     {
-        if (genom_sequence_reserve(&(fdata->pixels), h*w*c)  == -1) {
+        if (genom_sequence_reserve(&(rfdata->pixels), h*w*c)  == -1) {
             d435_e_mem_detail d;
             snprintf(d.what, sizeof(d.what), "unable to allocate frame memory");
             warnx("%s", d.what);
             return d435_e_mem(&d,self);
         }
-        fdata->pixels._length = h*w*c;
-        fdata->height = h;
-        fdata->width = w;
-        fdata->bpp = c;
+        rfdata->pixels._length = h*w*c;
+        rfdata->height = h;
+        rfdata->width = w;
+        rfdata->bpp = c;
+        rfdata->compressed = false;
     }
 
-    fdata->pixels._buffer = (uint8_t*) rsframe.get_data();
+    rfdata->pixels._buffer = (uint8_t*) rsframe.get_data();
+    rfdata->ts.sec = floor(ms/1000);
+    rfdata->ts.nsec = (ms - (double)rfdata->ts.sec*1000) * 1e6;
 
-    double ms = rsframe.get_timestamp();
-    fdata->ts.sec = floor(ms/1000);
-    fdata->ts.nsec = (ms - (double)fdata->ts.sec*1000) * 1e6;
+    if (compression_rate != -1)
+    {
+        int16_t type;
+        if      (rfdata->bpp == 2) type = CV_16UC1;
+        else if (rfdata->bpp == 3) type = CV_8UC3;
+        else if (rfdata->bpp == 4) type = CV_8UC4;
 
-    frame->write(self);
+        Mat cvframe = Mat(
+            Size(rfdata->width, rfdata->height),
+            type,
+            rfdata->pixels._buffer,
+            Mat::AUTO_STEP
+        );
+
+        // JPEG does not handle 16bits data and alpha channels
+        int16_t cc = 3;    // compressed image channels
+        if (rfdata->bpp == 2) {
+            cvframe.convertTo(cvframe, CV_8U, 1/256.0);
+            cc = 1;
+        }
+        else if (rfdata->bpp == 4) {
+            cvtColor(cvframe, cvframe, CV_RGBA2RGB);
+            cc = 3;
+        }
+
+        std::vector<int32_t> compression_params;
+        compression_params.push_back(IMWRITE_JPEG_QUALITY);
+        compression_params.push_back(compression_rate);
+
+        std::vector<uint8_t> buf;
+        imencode(".jpg", cvframe, buf, compression_params);
+
+        if (buf.size() > cfdata->pixels._maximum)
+            if (genom_sequence_reserve(&(cfdata->pixels), buf.size())  == -1) {
+                d435_e_mem_detail d;
+                snprintf(d.what, sizeof(d.what), "unable to allocate frame memory");
+                warnx("%s", d.what);
+                return d435_e_mem(&d,self);
+            }
+        cfdata->pixels._length = buf.size();
+        cfdata->height = rfdata->height;
+        cfdata->width = rfdata->width;
+        cfdata->bpp = cc;
+        cfdata->compressed = true;
+
+        cfdata->pixels._buffer = buf.data();
+        cfdata->ts = rfdata->ts;
+    }
+
+    frame->write("raw", self);
+    frame->write("compressed", self);
 
     return d435_poll;
 }

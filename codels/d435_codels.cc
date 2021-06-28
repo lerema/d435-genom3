@@ -106,3 +106,27 @@ set_size(const or_camera_info_size_s *size, const genom_context self)
         return d435_e_io(&d,self);
     }
 }
+
+
+/* --- Attribute set_compression ---------------------------------------- */
+
+/** Validation codel set_compression_rate of attribute set_compression.
+ *
+ * Returns genom_ok.
+ * Throws d435_e_io.
+ */
+genom_event
+set_compression_rate(int16_t compression_rate,
+                     const genom_context self)
+{
+    if (compression_rate >= -1 && compression_rate <= 100)
+        return genom_ok;
+    else
+    {
+        d435_e_io_detail d;
+        snprintf(d.what, sizeof(d.what), "%s", "unallowed compression rate");
+        warnx("io error: %s", d.what);
+        return d435_e_io(&d,self);
+    }
+    return genom_ok;
+}

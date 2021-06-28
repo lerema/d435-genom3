@@ -31,6 +31,10 @@
 #include <librealsense2/rs.hpp>
 using namespace rs2;
 
+#include <opencv2/opencv.hpp>
+using namespace cv;
+
+
 struct or_camera_pipe {
     pipeline       pipe;
     frameset       data;

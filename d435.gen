@@ -26,18 +26,17 @@
 #pragma require "openrobots2-idl >= 2.0"
 #pragma require "vision-idl"
 
-// #include "or/pose/pose_estimator.gen"
 #include "or/sensor/camera.gen"
 #include "or/sensor/depth.idl"
 
 /* ---- Component declaration --------------------------------------------- */
 
 component d435 {
-    version	    "0.1";
+    version	    "1.0";
     email		"martin.jacquet@laas.fr";
     lang		"c";
     require	    "genom3 >= 2.99.26";
-    codels-require	"realsense2";
+    codels-require	"realsense2, opencv";
 
     /* ---- Interfaces ---------------------------------------------------- */
     provides or_camera;
@@ -51,7 +50,7 @@ component d435 {
     // port out  or::sensor::pc    pc;
     // port out  or::sensor::frame ir;
     /* interfaces ports:
-     *  port out  or::sensor::frame         frame;
+     *  port multiple out   or::sensor::frame    frame;
      *  port out  or::sensor::intrinsics    intrinsics;
      *  port out  or::sensor::extrinsics    extrinsics;
      */
@@ -60,23 +59,17 @@ component d435 {
     ids {
         or_camera::info info;
         or_camera::pipe pipe;
-
-        // struct flag {
-        //     boolean rgb;
-        //     boolean ir;
-        //     boolean pc;
-        // };
     };
 
     /* ---- Tasks --------------------------------------------------------- */
     task main {
-        codel<start> d435_main_start(out ::ids, out extrinsics)
+        codel<start> d435_main_start(out ::ids, out extrinsics, out frame)
             yield poll;
 
         async codel<poll> d435_main_poll(in info.started, inout pipe)
             yield pause::poll, pub;
 
-        codel<pub> d435_main_pub(in pipe, out frame)
+        codel<pub> d435_main_pub(in info.compression_rate, in pipe, out frame)
             yield poll;
     };
 
@@ -109,6 +102,10 @@ component d435 {
     attribute set_size(in info.size = {1280, 720} : "Video size (1920x1080, 1280x720, 960x540, 848x480, 640x480, 640x360, 424x240, 320x240)") {
         throw e_io;
         validate set_size(local in size);
+    };
+    attribute set_compression(in info.compression_rate = -1 : "Image compression (0-100) ; -1 to disable compression.") {
+        throw e_io;
+        validate set_compression_rate(local in compression_rate);
     };
 
     /* ---- Calibration --------------------------------------------------- */

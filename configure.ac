@@ -26,7 +26,7 @@ dnl
 
 AC_PREREQ(2.59)
 
-AC_INIT([d435-genom3],[0.1],[martin.jacquet@laas.fr])
+AC_INIT([d435-genom3],[1.0],[martin.jacquet@laas.fr])
 AC_CONFIG_MACRO_DIR([autoconf])
 AC_CONFIG_AUX_DIR([autoconf])
 AC_CONFIG_HEADERS([autoconf/acd435.h])
@@ -56,7 +56,7 @@ PKG_CHECK_MODULES(requires, [
   genom3 >= 2.99.26
 ])
 PKG_CHECK_MODULES(codels_requires, [
-  realsense2
+  realsense2, opencv
 ])
 
 AC_PATH_PROG(GENOM3, [genom3], [no])
