@@ -56,8 +56,8 @@ d435_main_start(d435_ids *ids, const d435_extrinsics *extrinsics,
     frame->open("raw", self);
     frame->open("compressed", self);
 
-    genom_sequence_reserve(&(frame->data("raw", self)->pixels), 0);
-    genom_sequence_reserve(&(frame->data("compressed", self)->pixels), 0);
+    (void)genom_sequence_reserve(&(frame->data("raw", self)->pixels), 0);
+    (void)genom_sequence_reserve(&(frame->data("compressed", self)->pixels), 0);
 
     return d435_poll;
 }
