@@ -40,4 +40,25 @@ struct or_camera_pipe {
     frameset       data;
 };
 
+// template <typename T>
+// class custom_allocator {
+// private:
+//     T* mem;
+//     size_t size;
+// public:
+//     typedef T     value_type;
+//
+//     custom_allocator(uint8_t* ptr, size_t n) : mem(ptr), size(n) {}
+//     custom_allocator(const custom_allocator& other) throw() : mem(other.mem), size(other.size) {}
+//
+//     template <typename U>
+//     custom_allocator &operator=(const custom_allocator<U> &other) { return *this; }
+//     custom_allocator<T> &operator=(const custom_allocator &other) { return *this; }
+//     ~custom_allocator() {}
+//
+//     T* allocate(size_t n, const void* hint = 0) { return mem; }
+//     void deallocate(T* ptr, size_t n) {}
+//     size_t max_size() const { return size; }
+// };
+
 #endif /* H_D435_CODELS */

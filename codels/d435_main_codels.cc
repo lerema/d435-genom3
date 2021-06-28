@@ -109,7 +109,8 @@ d435_main_pub(int16_t compression_rate, const or_camera_pipe *pipe,
 
     if (h*w*c != rfdata->pixels._maximum)
     {
-        if (genom_sequence_reserve(&(rfdata->pixels), h*w*c)  == -1) {
+        if (genom_sequence_reserve(&(rfdata->pixels), h*w*c)  == -1)
+        {
             d435_e_mem_detail d;
             snprintf(d.what, sizeof(d.what), "unable to allocate frame memory");
             warnx("%s", d.what);
@@ -122,7 +123,7 @@ d435_main_pub(int16_t compression_rate, const or_camera_pipe *pipe,
         rfdata->compressed = false;
     }
 
-    rfdata->pixels._buffer = (uint8_t*) rsframe.get_data();
+    memcpy(rfdata->pixels._buffer, rsframe.get_data(), rfdata->pixels._length);
     rfdata->ts.sec = floor(ms/1000);
     rfdata->ts.nsec = (ms - (double)rfdata->ts.sec*1000) * 1e6;
 
@@ -171,7 +172,7 @@ d435_main_pub(int16_t compression_rate, const or_camera_pipe *pipe,
         cfdata->bpp = cc;
         cfdata->compressed = true;
 
-        cfdata->pixels._buffer = buf.data();
+        memcpy(cfdata->pixels._buffer, buf.data(), buf.size());
         cfdata->ts = rfdata->ts;
     }
 
