@@ -139,7 +139,7 @@ a|.Inputs
 |===
 a|.Inputs
 [disc]
- * `string<12>` `serial` serial number of the desired D435
+ * `string<32>` `serial` serial number of the desired D435
 
 a|.Throws
 [disc]

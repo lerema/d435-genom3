@@ -102,9 +102,9 @@ d435_main_pub(int16_t compression_rate, const or_camera_pipe *pipe,
     or_sensor_frame* cfdata = frame->data("compressed", self);
 
     video_frame rsframe = pipe->data.get_color_frame();
-    const uint16_t w = rsframe.get_width();
-    const uint16_t h = rsframe.get_height();
-    const uint16_t c = rsframe.get_bytes_per_pixel();
+    const uint32_t w = rsframe.get_width();
+    const uint32_t h = rsframe.get_height();
+    const uint32_t c = rsframe.get_bytes_per_pixel();
     const double ms = rsframe.get_timestamp();
 
     if (h*w*c != rfdata->pixels._maximum)
@@ -192,7 +192,7 @@ d435_main_pub(int16_t compression_rate, const or_camera_pipe *pipe,
  * Throws d435_e_rs, d435_e_io.
  */
 genom_event
-d435_connect(const char serial[12], or_camera_pipe **pipe,
+d435_connect(const char serial[32], or_camera_pipe **pipe,
              const or_camera_info *info, bool *started,
              const d435_intrinsics *intrinsics,
              const genom_context self)
@@ -211,6 +211,10 @@ d435_connect(const char serial[12], or_camera_pipe **pipe,
         try {
             // Start streaming
             config cfg;
+            if (!strcmp(serial,"\0") || !strcmp(serial,"0"))
+                cfg.enable_device("");
+            else
+                cfg.enable_device(serial);
 
             rs2_format fmt = RS2_FORMAT_RGB8;
             if (!strcmp(info->format,"RGBA8")) fmt = RS2_FORMAT_RGBA8;

@@ -74,7 +74,7 @@ component d435 {
     };
 
     /* ---- Hardware connection ------------------------------------------- */
-    activity connect(in string<12> serial = : "serial number of the desired D435") {
+    activity connect(in string<32> serial = : "serial number of the desired D435") {
         task main;
         throw e_rs, e_io;
 
