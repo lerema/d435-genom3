@@ -80,7 +80,7 @@ d435_main_poll(bool started, or_camera_pipe **pipe,
     try {
         (*pipe)->data = (*pipe)->pipe.wait_for_frames(15000);
     }
-    catch (rs2::error e) {
+    catch (rs2::error& e) {
         warnx("%s\n", e.what());
         return d435_pause_poll;
     }
@@ -148,7 +148,12 @@ d435_main_pub(int16_t compression_rate, const or_camera_pipe *pipe,
             cc = 1;
         }
         else if (rfdata->bpp == 4) {
-            cvtColor(cvframe, cvframe, CV_RGBA2RGB);
+            #if (CV_VERSION_MAJOR >= 4)
+                cv::cvtColor(cvframe, cvframe, COLOR_BGRA2RGB);
+            #else
+                cv::cvtColor(cvframe, cvframe, CV_BGRA2RGB);
+            #endif
+            // cvtColor(cvframe, cvframe, CV_RGBA2RGB);
             cc = 3;
         }
 
